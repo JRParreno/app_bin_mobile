@@ -1,4 +1,4 @@
-import 'package:app_bin_mobile/src/features/Apps/widgets/app_installed_tile.dart';
+import 'package:app_bin_mobile/src/features/apps/widgets/app_installed_tile.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 

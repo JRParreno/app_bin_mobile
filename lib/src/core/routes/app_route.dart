@@ -1,4 +1,4 @@
-import 'package:app_bin_mobile/src/features/Stats/apps_statistics_screen.dart';
+import 'package:app_bin_mobile/src/features/stats/apps_statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic>? generateRoute(RouteSettings settings) {

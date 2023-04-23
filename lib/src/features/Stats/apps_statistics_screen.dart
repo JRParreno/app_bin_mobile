@@ -1,5 +1,5 @@
 import 'package:app_bin_mobile/src/core/utils/help.dart';
-import 'package:app_bin_mobile/src/features/Stats/models/chart_data.dart';
+import 'package:app_bin_mobile/src/features/stats/models/chart_data.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';

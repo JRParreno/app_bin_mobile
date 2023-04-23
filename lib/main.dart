@@ -1,6 +1,6 @@
 import 'package:app_bin_mobile/src/core/routes/app_route.dart';
-import 'package:app_bin_mobile/src/features/Apps/widgets/app_installed_list.dart';
-import 'package:app_bin_mobile/src/features/Stats/apps_statistics_screen.dart';
+import 'package:app_bin_mobile/src/features/apps/widgets/app_installed_list.dart';
+import 'package:app_bin_mobile/src/features/stats/apps_statistics_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:device_apps/device_apps.dart';
 
