@@ -12,6 +12,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,12 +22,15 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(8.0),
-          child: const SizedBox(
+          child: SizedBox(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                LoginHeader(),
-                LoginForm(),
+                const LoginHeader(),
+                LoginForm(
+                  emailController: emailController,
+                  passwordController: passwordController,
+                ),
               ],
             ),
           ),

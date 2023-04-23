@@ -14,9 +14,31 @@ class LoginHeader extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Assets.svg.appBinLogo.svg(),
-              const CustomText(text: "Welcome tp App Bin"),
-              const CustomText(text: "Your Application Management Usage"),
+              Assets.svg.appBinLogo.svg(height: 130),
+              const Divider(
+                color: Colors.transparent,
+              ),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomText(
+                    text: "Welcome to App Bin",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(
+                color: Colors.transparent,
+              ),
+              const CustomText(
+                text: "Your Application Management Usage",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
             ],
           ),
         ),

@@ -1,1 +1,5 @@
-<color name="dim_gray">#494E56</color>
+<resources>
+    <color name="dim_gray">#494E56</color>
+    <color name="gray">#DCDCDC</color>
+    <color name="primary_btn">#FE7B4D</color>
+</resources>
