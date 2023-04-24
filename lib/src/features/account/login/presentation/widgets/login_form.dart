@@ -99,10 +99,10 @@ class LoginForm extends StatelessWidget {
                     height: 10,
                     color: Colors.transparent,
                   ),
-                  const Row(
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: const [
                       CustomText(
                         text: "or ",
                       ),
