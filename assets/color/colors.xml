@@ -1,5 +1,8 @@
 <resources>
     <color name="dim_gray">#494E56</color>
     <color name="gray">#DCDCDC</color>
-    <color name="primary_btn">#FE7B4D</color>
+    <color name="primary">#FE7B4D</color>
+    <color name="error">#B00020</color>
+    <color name="place_holder">#FF494E56</color>
+    <color name="border">#FFCED3DD</color>
 </resources>

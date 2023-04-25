@@ -1,33 +1,55 @@
+import 'package:app_bin_mobile/gen/colors.gen.dart';
+import 'package:app_bin_mobile/src/core/utils/size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextField extends StatefulWidget {
-  final String label;
-  final TextEditingController controller;
-  final bool isEnabled;
-  final TextInputType? inputType;
-  final TextInputAction? actionType;
-  final Function(String)? onChanged;
-  final Function(String text)? validate;
-  final String? errorMessage;
+  final String labelText;
+  final TextEditingController textController;
+  final bool focus;
+  final int? maxLength;
+  final String? parametersValidate;
+  final AutovalidateMode? mode;
+  final bool readOnly;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
   final int? minLines;
-  final int maxLines;
-  final Icon? prefixIcon;
-  final Icon? suffixIcon;
+  final int? maxLines;
+  final Function(String)? onChanged;
+  final String? errorText;
+  final Function()? onTap;
+  final Widget? suffixIcon;
+  final List<TextInputFormatter>? inputFormatters;
+  final EdgeInsetsGeometry? padding;
+  final String? helpText;
+  final String? hintText;
+  final FormFieldValidator<String>? validators;
+  final bool obscureText;
 
   const CustomTextField({
     super.key,
-    required this.label,
-    required this.controller,
-    this.isEnabled = true,
-    this.inputType,
-    this.actionType,
-    this.onChanged,
-    this.validate,
-    this.errorMessage,
+    required this.labelText,
+    required this.textController,
+    this.maxLength,
+    this.parametersValidate = '',
+    this.focus = false,
+    this.mode,
+    this.readOnly = false,
+    this.keyboardType,
+    this.textInputAction,
     this.minLines,
     this.maxLines = 1,
-    this.prefixIcon,
+    this.onChanged,
+    this.errorText,
+    this.onTap,
     this.suffixIcon,
+    this.inputFormatters,
+    this.padding,
+    this.helpText,
+    this.hintText,
+    this.validators,
+    this.obscureText = false,
   });
 
   @override
@@ -35,120 +57,120 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-  late FocusNode _focusNode;
-  Color _color = const Color(0xFF494E56);
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = FocusNode();
-    widget.controller.addListener(() {
-      _color = widget.validate != null &&
-              widget.validate!(widget.controller.text) == false
-          ? const Color(0xFFEC5D77)
-          : _focusNode.hasFocus
-              ? const Color(0xFF0030FF)
-              : const Color(0xFF494E56);
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    widget.controller.dispose();
-    super.dispose();
-  }
-
-  void _requestFocus() {
-    setState(() {
-      FocusScope.of(context).requestFocus(_focusNode);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Focus(
-        onFocusChange: (onChanged) {
-          _color = widget.validate != null &&
-                  widget.validate!(widget.controller.text) == false
-              ? const Color(0xFFEC5D77)
-              : onChanged
-                  ? Colors.black
-                  : const Color(0xFF494E56);
-        },
-        child: TextField(
-          focusNode: _focusNode,
-          onTap: _requestFocus,
-          onChanged: widget.onChanged,
-          enabled: widget.isEnabled,
-          controller: widget.controller,
-          keyboardType: widget.inputType,
-          textInputAction: widget.actionType,
-          minLines: widget.minLines,
-          maxLines: widget.maxLines,
-          cursorColor: const Color(0xFF2B3039),
-          cursorWidth: 1,
-          cursorHeight: 20,
-          decoration: InputDecoration(
-              labelText: widget.label,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 24),
+          child: TextFormField(
+            obscureText: widget.obscureText,
+            inputFormatters: widget.inputFormatters,
+            onTap: widget.onTap,
+            onChanged: widget.onChanged,
+            readOnly: widget.readOnly,
+            maxLength: widget.maxLength,
+            controller: widget.textController,
+            autovalidateMode: widget.mode,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            minLines: widget.minLines,
+            maxLines: widget.maxLines,
+            decoration: InputDecoration(
+              hintText: widget.hintText,
+              labelText: widget.labelText,
+              counterText: '',
+              focusColor: Colors.blue,
               labelStyle: const TextStyle(
                 fontSize: 16,
                 letterSpacing: .3,
                 fontWeight: FontWeight.w400,
               ),
+              floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                  (Set<MaterialState> states) {
+                final Color? color = states.contains(MaterialState.error)
+                    ? ColorName.error
+                    : null;
+                return TextStyle(
+                  fontSize: 16,
+                  letterSpacing: .5,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                );
+              }),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  color: ColorName.error,
+                ),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  color: ColorName.border,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: widget.validate != null &&
-                          widget.validate!(widget.controller.text) == false
-                      ? const Color(0xFFEC5D77)
-                      : widget.controller.text.isEmpty
-                          ? const Color(0xFFCED3DD)
-                          : const Color(0xFF494E56),
+                borderSide: const BorderSide(
+                  color: ColorName.placeHolder,
                 ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: _color,
-                ),
-              ),
-              focusColor: Colors.black,
-              floatingLabelStyle: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: .5,
-                  color: _color),
-              contentPadding: const EdgeInsets.all(16),
-              filled: true,
-              fillColor:
-                  widget.isEnabled ? Colors.white : const Color(0xFFF1F2F3),
-              errorText: widget.validate != null &&
-                      widget.validate!(widget.controller.text) == false
-                  ? widget.errorMessage
-                  : null,
-              errorStyle: const TextStyle(
-                  color: Color(0xFFEC5D77), fontSize: 12, letterSpacing: .5),
               errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Color(0xFFEC5D77))),
-              disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(
-                    color: Color(0xFFCED3DD),
-                  )),
-              focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Color(0xFFEC5D77))),
-              prefixIcon: widget.prefixIcon,
-              suffixIcon: widget.suffixIcon),
-          style: const TextStyle(
-            fontSize: 16,
-            letterSpacing: 0.3,
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  color: ColorName.error,
+                ),
+              ),
+              // contentPadding: EdgeInsets.symmetric(
+              //   horizontal: SizeConfig.getProportionateScreenWidth(16),
+              //   vertical: SizeConfig.getProportionateScreenHeight(16.5),
+              // ),
+              errorStyle: const TextStyle(
+                fontSize: 0,
+                height: 0,
+              ),
+              suffixIcon: widget.suffixIcon,
+            ),
+            style: const TextStyle(
+              fontSize: 16,
+              letterSpacing: 0.5,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
+            validator: widget.validators ??
+                (value) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.parametersValidate != null) {
+                    return widget.parametersValidate;
+                  }
+                  return null;
+                },
           ),
-        ));
+        ),
+        if (widget.helpText != null) ...[
+          SizedBox(height: 8.sp),
+          Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.getProportionateScreenWidth(40)),
+              child: Text(
+                widget.helpText!,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w400,
+                ),
+              )),
+        ]
+      ],
+    );
+  }
+
+  String emptyValidation(String value, String messageError) {
+    if (value.isEmpty) {
+      return messageError;
+    }
+    return '';
   }
 }

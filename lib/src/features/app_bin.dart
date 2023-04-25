@@ -1,5 +1,5 @@
 import 'package:app_bin_mobile/src/core/routes/app_route.dart';
-import 'package:app_bin_mobile/src/features/account/login/presentation/screen/login_screen.dart';
+import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -22,7 +22,7 @@ class _AppBinState extends State<AppBin> {
     // the splash screen is displayed.  Remove the following example because
     // delaying the user experience is a bad design practice!
     // ignore_for_file: avoid_print
-    Future.delayed(const Duration(seconds: 10), () {
+    Future.delayed(const Duration(seconds: 3), () {
       FlutterNativeSplash.remove();
     });
   }
@@ -35,7 +35,7 @@ class _AppBinState extends State<AppBin> {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: generateRoute,
-      home: const LoginScreen(),
+      home: const OnBoardingScreen(),
     );
   }
 }

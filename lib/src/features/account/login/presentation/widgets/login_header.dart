@@ -14,7 +14,7 @@ class LoginHeader extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Assets.svg.appBinLogo.svg(height: 130),
+              Assets.images.appbin.image(),
               const Divider(
                 color: Colors.transparent,
               ),
