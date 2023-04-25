@@ -20,9 +20,11 @@ dependencies:
   app_usage: ^2.1.1
   permission_handler: ^10.2.0
   syncfusion_flutter_charts: ^21.1.41
-  flutter_gen_runner: ^5.3.0
+  flutter_gen_runner: 5.1.0+1
   build_runner: ^2.3.3
-  flutter_svg: ^2.0.5
+  flutter_svg: ^1.1.6
+  flutter_native_splash: ^2.2.18
+  flutter_launcher_icons: ^0.12.0
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +43,7 @@ flutter:
   assets:
     - assets/images/
     - assets/svg/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -80,3 +83,9 @@ flutter_gen:
   colors:
     inputs:
       - assets/color/colors.xml
+
+flutter_icons:
+  image_path: "assets/icons/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
