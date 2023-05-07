@@ -7,7 +7,8 @@
         {
             "name": "app_bin_mobile",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flutterMode": "debug"
         },
         {
             "name": "app_bin_mobile (profile mode)",

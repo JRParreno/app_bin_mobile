@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
 // import 'package:device_apps/device_apps.dart';
@@ -34,7 +36,7 @@ class Helper {
     return result;
   }
 
-  static Future<List<List<AppUsageInfo>>> getAppUsage() async {
+  static FutureOr<List<List<AppUsageInfo>>> getAppUsage() async {
     List<List<AppUsageInfo>> weekUsageInfo = [];
     final date = DateTime.now();
     final startDate = getDate(date.subtract(Duration(days: date.weekday - 1)));
