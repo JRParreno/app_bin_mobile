@@ -100,7 +100,7 @@ class LoginForm extends StatelessWidget {
                   ],
                 ),
                 const Divider(
-                  height: 50,
+                  height: 25,
                   color: Colors.transparent,
                 ),
                 Column(
