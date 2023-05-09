@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         _passwordVisible = !_passwordVisible;
                       });
                     },
-                    child: Icon(_passwordVisible
+                    child: Icon(!_passwordVisible
                         ? Icons.visibility
                         : Icons.visibility_off),
                   ),

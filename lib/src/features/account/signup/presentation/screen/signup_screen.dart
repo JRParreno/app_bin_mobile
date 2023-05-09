@@ -148,8 +148,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _passwordVisible = !_passwordVisible;
                   });
                 },
-                child: Icon(
-                    _passwordVisible ? Icons.visibility : Icons.visibility_off),
+                child: Icon(!_passwordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off),
               ),
               suffixIconConfirmPassword: GestureDetector(
                 onTap: () {
@@ -157,7 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _confirmPasswordVisible = !_confirmPasswordVisible;
                   });
                 },
-                child: Icon(_confirmPasswordVisible
+                child: Icon(!_confirmPasswordVisible
                     ? Icons.visibility
                     : Icons.visibility_off),
               ),

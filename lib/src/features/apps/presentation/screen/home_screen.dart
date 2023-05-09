@@ -1,6 +1,7 @@
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/bottom_navigation.dart';
 import 'package:app_bin_mobile/src/features/stats/apps_statistics_screen.dart';
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final screens = [
     const BlockScreen(),
     const AppsStatisticsScreen(),
-    const BlockScreen(),
+    const ProfileScreen(),
   ];
 
   String handleTitleAppBar() {

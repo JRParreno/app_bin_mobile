@@ -1,4 +1,5 @@
 import 'package:app_bin_mobile/src/features/account/login/presentation/screen/login_screen.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
 import 'package:app_bin_mobile/src/features/account/signup/presentation/screen/signup_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
@@ -23,6 +24,8 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
             return const LoginScreen();
           case SignUpScreen.routeName:
             return const SignUpScreen();
+          case ProfileScreen.routeName:
+            return const ProfileScreen();
         }
         return const Scaffold(
           resizeToAvoidBottomInset: false,
