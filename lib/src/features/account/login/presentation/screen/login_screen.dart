@@ -1,7 +1,14 @@
+import 'package:app_bin_mobile/src/core/bloc/profile/profile_bloc.dart';
+import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
+import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
+import 'package:app_bin_mobile/src/features/account/login/data/repositories/login_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/account/login/presentation/widgets/login_form.dart';
 import 'package:app_bin_mobile/src/features/account/login/presentation/widgets/login_header.dart';
+import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
+import 'package:app_bin_mobile/src/features/account/profile/data/repositories/profile_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/login-screen";
@@ -13,15 +20,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
   final loginFormKey = GlobalKey<FormState>();
   bool _passwordVisible = true;
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
     super.dispose();
   }
 
@@ -32,8 +39,56 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void handleLogin() {
     if (loginFormKey.currentState!.validate()) {
-      Navigator.of(context).popAndPushNamed(HomeScreen.routeName);
+      LoaderDialog.show(context: context);
+
+      LoginRepositoryImpl()
+          .login(email: emailCtrl.value.text, password: passwordCtrl.value.text)
+          .then((value) async {
+        await LocalStorage.storeLocalStorage(
+            '_token', value['data']['access_token']);
+        await LocalStorage.storeLocalStorage(
+            '_refreshToken', value['data']['refresh_token']);
+        handleGetProfile();
+      }).catchError((onError) {
+        LoaderDialog.hide(context: context);
+        Future.delayed(const Duration(milliseconds: 500), () {
+          CommonDialog.showMyDialog(
+            context: context,
+            title: "FireGuard",
+            body: "Invalid email or password",
+            isError: true,
+          );
+        });
+      });
     }
+  }
+
+  void handleGetProfile() async {
+    await ProfileRepositoryImpl().fetchProfile().then((profile) async {
+      await LocalStorage.storeLocalStorage('_user', profile.toJson());
+      handleSetProfileBloc(profile);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          HomeScreen.routeName,
+          (route) => false,
+        );
+      });
+    }).catchError((onError) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        CommonDialog.showMyDialog(
+          context: context,
+          body: onError['data']['error_message'],
+          isError: true,
+        );
+      });
+    });
+    LoaderDialog.hide(context: context);
+  }
+
+  void handleSetProfileBloc(Profile profile) {
+    BlocProvider.of<ProfileBloc>(context).add(
+      SetProfileEvent(profile: profile),
+    );
   }
 
   @override
@@ -52,8 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const LoginHeader(),
                 LoginForm(
                   formKey: loginFormKey,
-                  emailController: emailController,
-                  passwordController: passwordController,
+                  emailCtrl: emailCtrl,
+                  passwordCtrl: passwordCtrl,
                   passwordVisible: _passwordVisible,
                   onSubmit: handleLogin,
                   suffixIcon: GestureDetector(

@@ -1,10 +1,10 @@
 import 'package:app_bin_mobile/gen/assets.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
-import 'package:app_bin_mobile/src/core/common_widget/custom_btn.dart';
 import 'package:app_bin_mobile/src/features/account/login/presentation/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class OnBoardingScreen extends StatefulWidget {
+  static const String routeName = '/on-boarding';
   const OnBoardingScreen({super.key});
 
   @override

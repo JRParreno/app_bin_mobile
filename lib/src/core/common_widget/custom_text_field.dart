@@ -2,7 +2,6 @@ import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
@@ -26,6 +25,7 @@ class CustomTextField extends StatefulWidget {
   final String? hintText;
   final FormFieldValidator<String>? validators;
   final bool obscureText;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -50,6 +50,7 @@ class CustomTextField extends StatefulWidget {
     this.hintText,
     this.validators,
     this.obscureText = false,
+    this.focusNode,
   });
 
   @override
@@ -59,111 +60,137 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 24),
-          child: TextFormField(
-            obscureText: widget.obscureText,
-            inputFormatters: widget.inputFormatters,
-            onTap: widget.onTap,
-            onChanged: widget.onChanged,
-            readOnly: widget.readOnly,
-            maxLength: widget.maxLength,
-            controller: widget.textController,
-            autovalidateMode: widget.mode,
-            keyboardType: widget.keyboardType,
-            textInputAction: widget.textInputAction,
-            minLines: widget.minLines,
-            maxLines: widget.maxLines,
-            decoration: InputDecoration(
-              hintText: widget.hintText,
-              labelText: widget.labelText,
-              counterText: '',
-              focusColor: Colors.blue,
-              labelStyle: const TextStyle(
-                fontSize: 16,
-                letterSpacing: .3,
-                fontWeight: FontWeight.w400,
-              ),
-              floatingLabelStyle: MaterialStateTextStyle.resolveWith(
-                  (Set<MaterialState> states) {
-                final Color? color = states.contains(MaterialState.error)
-                    ? ColorName.error
-                    : null;
-                return TextStyle(
-                  fontSize: 16,
-                  letterSpacing: .5,
-                  fontWeight: FontWeight.w700,
-                  color: color,
-                );
-              }),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: ColorName.error,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: ColorName.border,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: ColorName.placeHolder,
-                ),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: ColorName.error,
-                ),
-              ),
-              // contentPadding: EdgeInsets.symmetric(
-              //   horizontal: SizeConfig.getProportionateScreenWidth(16),
-              //   vertical: SizeConfig.getProportionateScreenHeight(16.5),
-              // ),
-              errorStyle: const TextStyle(
-                fontSize: 0,
-                height: 0,
-              ),
-              suffixIcon: widget.suffixIcon,
-            ),
-            style: const TextStyle(
-              fontSize: 16,
-              letterSpacing: 0.5,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-            validator: widget.validators ??
-                (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.parametersValidate != null) {
-                    return widget.parametersValidate;
-                  }
-                  return null;
-                },
-          ),
-        ),
-        if (widget.helpText != null) ...[
-          SizedBox(height: 8.sp),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 1),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Padding(
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 24),
+            child: TextFormField(
+              focusNode: widget.focusNode,
+              obscureText: widget.obscureText,
+              inputFormatters: widget.inputFormatters,
+              onTap: widget.onTap,
+              onChanged: widget.onChanged,
+              readOnly: widget.readOnly,
+              maxLength: widget.maxLength,
+              controller: widget.textController,
+              autovalidateMode: widget.mode,
+              keyboardType: widget.keyboardType,
+              textInputAction: widget.textInputAction,
+              minLines: widget.minLines,
+              maxLines: widget.maxLines,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                labelText: widget.labelText,
+                counterText: '',
+                focusColor: Colors.blue,
+                labelStyle: const TextStyle(
+                  fontSize: 16,
+                  letterSpacing: .3,
+                  fontWeight: FontWeight.w400,
+                ),
+                floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                    (Set<MaterialState> states) {
+                  final Color? color = states.contains(MaterialState.error)
+                      ? ColorName.error
+                      : null;
+                  return TextStyle(
+                    fontSize: 16,
+                    letterSpacing: .5,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  );
+                }),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: ColorName.error,
+                  ),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: ColorName.border,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: ColorName.placeHolder,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: ColorName.error,
+                  ),
+                ),
+                // contentPadding: EdgeInsets.symmetric(
+                //   horizontal: SizeConfig.getProportionateScreenWidth(16),
+                //   vertical: SizeConfig.getProportionateScreenHeight(16.5),
+                // ),
+                errorStyle: const TextStyle(
+                  fontSize: 0,
+                  height: 0,
+                ),
+                suffixIcon: widget.suffixIcon,
+              ),
+              style: const TextStyle(
+                fontSize: 16,
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+              ),
+              validator: widget.validators ??
+                  (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.parametersValidate != null) {
+                      return widget.parametersValidate;
+                    }
+                    return null;
+                  },
+            ),
+          ),
+          if (widget.helpText != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              margin: const EdgeInsets.only(left: 10),
               padding: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.getProportionateScreenWidth(40)),
+                horizontal: SizeConfig.getProportionateScreenWidth(40),
+              ),
               child: Text(
                 widget.helpText!,
-                style: TextStyle(
-                  fontSize: 12.sp,
+                style: const TextStyle(
+                  fontSize: 12,
                   letterSpacing: 0.5,
                   fontWeight: FontWeight.w400,
                 ),
-              )),
-        ]
-      ],
+              ),
+            ),
+          ],
+          if (widget.errorText != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              margin: const EdgeInsets.only(left: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: SizeConfig.getProportionateScreenWidth(40),
+              ),
+              child: Text(
+                widget.errorText!,
+                style: const TextStyle(
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w400,
+                  color: ColorName.error,
+                ),
+              ),
+            ),
+          ]
+        ],
+      ),
     );
   }
 

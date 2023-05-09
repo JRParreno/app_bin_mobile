@@ -95,4 +95,17 @@ class Helper {
         return "";
     }
   }
+
+  static String? regexTest({
+    required RegExp regex,
+    required String value,
+    required errorText,
+  }) {
+    final sames = value.isEmpty
+        ? "Required"
+        : regex.hasMatch(value)
+            ? null
+            : errorText;
+    return sames;
+  }
 }

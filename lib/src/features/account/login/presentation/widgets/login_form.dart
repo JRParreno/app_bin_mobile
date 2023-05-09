@@ -1,11 +1,11 @@
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
-import 'package:app_bin_mobile/src/core/common_widget/custom_btn.dart';
+import 'package:app_bin_mobile/src/features/account/signup/presentation/screen/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatelessWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
+  final TextEditingController emailCtrl;
+  final TextEditingController passwordCtrl;
   final GlobalKey<FormState> formKey;
   final Widget suffixIcon;
   final bool passwordVisible;
@@ -13,8 +13,8 @@ class LoginForm extends StatelessWidget {
 
   const LoginForm({
     super.key,
-    required this.emailController,
-    required this.passwordController,
+    required this.emailCtrl,
+    required this.passwordCtrl,
     required this.formKey,
     required this.suffixIcon,
     required this.passwordVisible,
@@ -29,7 +29,7 @@ class LoginForm extends StatelessWidget {
       child: Container(
         width: double.infinity,
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.5,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
           maxWidth: MediaQuery.of(context).size.width * 0.9,
         ),
         margin: const EdgeInsets.only(top: 30),
@@ -70,7 +70,7 @@ class LoginForm extends StatelessWidget {
                       height: 20,
                     ),
                     CustomTextField(
-                      textController: emailController,
+                      textController: emailCtrl,
                       labelText: "Email",
                       keyboardType: TextInputType.emailAddress,
                       padding: EdgeInsets.zero,
@@ -80,7 +80,7 @@ class LoginForm extends StatelessWidget {
                       color: Colors.transparent,
                     ),
                     CustomTextField(
-                      textController: passwordController,
+                      textController: passwordCtrl,
                       labelText: "Password",
                       padding: EdgeInsets.zero,
                       parametersValidate: 'required',
@@ -112,18 +112,22 @@ class LoginForm extends StatelessWidget {
                       width: 275,
                     ),
                     const Divider(
-                      height: 10,
+                      height: 15,
                       color: Colors.transparent,
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CustomText(
+                      children: [
+                        const CustomText(
                           text: "or ",
                         ),
                         CustomTextLink(
                           text: "Sign up",
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(SignUpScreen.routeName);
+                          },
                         ),
                       ],
                     )
