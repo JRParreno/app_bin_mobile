@@ -44,6 +44,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ProfileUtils.handleLogout(context);
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.logout),
+      ),
     );
   }
 }
