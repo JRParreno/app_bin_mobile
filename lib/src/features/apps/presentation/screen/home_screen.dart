@@ -1,10 +1,9 @@
-import 'package:app_bin_mobile/gen/colors.gen.dart';
-import 'package:app_bin_mobile/src/core/config/app_constant.dart';
-import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/block_screen.dart';
-import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/bottom_navigation.dart';
+import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/persistent_bottom_navigation.dart';
 import 'package:app_bin_mobile/src/features/stats/apps_statistics_screen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:device_apps/device_apps.dart';
 
@@ -20,6 +19,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Application> myApps = [];
   int currentTab = 0;
+
+  final PersistentTabController _controller =
+      PersistentTabController(initialIndex: 0);
 
   Future<List<Application>> getListOfApps() async {
     final tempList =
@@ -39,23 +41,33 @@ class _HomeScreenState extends State<HomeScreen> {
         .toList();
   }
 
-  final screens = [
+  final _buildScreens = [
     const BlockScreen(),
     const AppsStatisticsScreen(),
     const ProfileScreen(),
   ];
 
-  String handleTitleAppBar() {
-    switch (currentTab) {
-      case 0:
-        return AppConstant.appName;
-      case 1:
-        return "Statistics";
-      case 2:
-        return "Profile";
-      default:
-        return "";
-    }
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.shield),
+        title: ("Blocking"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.chart_bar),
+        title: ("Statistics"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.profile_circled),
+        title: ("Profile"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+    ];
   }
 
   @override
@@ -67,29 +79,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(handleTitleAppBar()),
-        backgroundColor: ColorName.primary,
-      ),
-      body: SizedBox(
-        child: screens[currentTab],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ProfileUtils.handleLogout(context);
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.logout),
-      ),
-      bottomNavigationBar: BottomNavigation(
-        onTap: (value) {
-          if (currentTab != value) {
-            setState(() {
-              currentTab = value;
-            });
-          }
-        },
-        selectedIndex: currentTab,
+      body: SafeArea(
+        child: SizedBox(
+          child: PersistentBottomNavigation(
+            buildScreens: _buildScreens,
+            controller: _controller,
+            navBarsItems: _navBarsItems(),
+          ),
+        ),
       ),
     );
   }

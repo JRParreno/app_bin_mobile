@@ -16,28 +16,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final profile = ProfileUtils.userProfile(context);
 
-    return Container(
-      padding: const EdgeInsets.all(10),
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundImage: profile?.profilePhoto != null
-                ? NetworkImage(profile!.profilePhoto!)
-                : null,
-            radius: 50,
-            child: profile?.profilePhoto != null
-                ? null
-                : const Icon(Icons.person, size: 50),
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              CircleAvatar(
+                backgroundImage: profile?.profilePhoto != null
+                    ? NetworkImage(profile!.profilePhoto!)
+                    : null,
+                radius: 50,
+                child: profile?.profilePhoto != null
+                    ? null
+                    : const Icon(Icons.person, size: 50),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomText(
+                text: '${profile?.firstName} ${profile?.lastName}',
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              )
+            ],
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          CustomText(
-            text: '${profile?.firstName} ${profile?.lastName}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          )
-        ],
+        ),
       ),
     );
   }
