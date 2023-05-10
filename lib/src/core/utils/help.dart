@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:app_bin_mobile/src/features/stats/models/chart_data.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
 // import 'package:device_apps/device_apps.dart';
@@ -36,12 +38,70 @@ class Helper {
     return result;
   }
 
-  static FutureOr<List<List<AppUsageInfo>>> getAppUsage() async {
+  static FutureOr<List<AppUsageInfo>> getCurrentAppUsage({
+    required DateTime startTime,
+    required DateTime endTime,
+  }) async {
+    final tempAppUsage =
+        await getAppUsage(endTime: endTime, startTime: startTime);
+    return tempAppUsage.first;
+  }
+
+  static Future<Duration> getCurrentDuration() async {
+    Duration duration = const Duration();
+    final appUsages = await Helper.getAppUsage();
+    if (appUsages.isNotEmpty && appUsages.last.isNotEmpty) {
+      final tempLast = appUsages.last;
+      for (var i = 0; i < tempLast.length; i++) {
+        final element = tempLast[i];
+        duration += element.usage;
+      }
+    }
+    return duration;
+  }
+
+  static List<Application> filterApps(
+    List<Application> apps,
+  ) {
+    return apps
+        .where((element) =>
+            element.category == ApplicationCategory.game ||
+            element.category == ApplicationCategory.social ||
+            element.category == ApplicationCategory.productivity)
+        .toList();
+  }
+
+  static List<AppUsageInfo> filterAppUsageInfo({
+    required List<AppUsageInfo> usages,
+    required List<Application> apps,
+  }) {
+    List<Application> appList = [];
+
+    appList = filterApps(apps);
+
+    return usages.where((e) {
+      final checkAppExists = appList.where((element) {
+        return element.packageName == e.packageName;
+      }).toList();
+      return checkAppExists.isNotEmpty;
+    }).toList();
+  }
+
+  static FutureOr<List<List<AppUsageInfo>>> getAppUsage({
+    DateTime? startTime,
+    DateTime? endTime,
+  }) async {
     List<List<AppUsageInfo>> weekUsageInfo = [];
-    final date = DateTime.now();
-    final startDate = getDate(date.subtract(Duration(days: date.weekday - 1)));
+    final date = startTime ?? DateTime.now();
+    final startDate = endTime != null
+        ? getDate(endTime.subtract(Duration(days: endTime.weekday - 1)))
+        : getDate(date.subtract(Duration(days: date.weekday - 1)));
 
     final weeksRange = getWeeksForRange(start: startDate, end: date);
+    final tempList = await DeviceApps.getInstalledApplications(
+      includeAppIcons: true,
+      includeSystemApps: false,
+    );
 
     for (var i = 0; i < weeksRange.first.length; i++) {
       final element = weeksRange.first[i];
@@ -50,8 +110,11 @@ class Helper {
       final endDateRange = date.day == element.day
           ? date
           : DateTime(element.year, element.month, element.day, 23, 59);
-      final appUsageInfoList =
+      final tempAppUsageInfoList =
           await AppUsage().getAppUsage(startDateRange, endDateRange);
+      final appUsageInfoList =
+          filterAppUsageInfo(usages: tempAppUsageInfoList, apps: tempList);
+
       weekUsageInfo.add(appUsageInfoList);
 
       if (date.day == element.day) break;
@@ -107,5 +170,13 @@ class Helper {
             ? null
             : errorText;
     return sames;
+  }
+
+  static List<AppUsageChartData> getAppUsageChartData(AppStatsLoaded state) {
+    return state.appUsage.map((e) {
+      return AppUsageChartData(
+          dayName: Helper.getDayName(e.last.startDate.weekday),
+          totalHrs: Helper.getMaxHours(e));
+    }).toList();
   }
 }

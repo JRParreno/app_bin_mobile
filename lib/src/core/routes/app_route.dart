@@ -1,10 +1,11 @@
 import 'package:app_bin_mobile/src/features/account/login/presentation/screen/login_screen.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
 import 'package:app_bin_mobile/src/features/account/signup/presentation/screen/signup_screen.dart';
+import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
-import 'package:app_bin_mobile/src/features/stats/apps_statistics_screen.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -12,6 +13,8 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
       settings: settings,
       builder: (context) {
         switch (settings.name) {
+          case AppsScreen.routeName:
+            return const AppsScreen();
           case BlockScreen.routeName:
             return const BlockScreen();
           case AppsStatisticsScreen.routeName:

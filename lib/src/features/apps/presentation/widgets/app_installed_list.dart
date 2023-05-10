@@ -13,15 +13,21 @@ class AppInstalledList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10.0),
-      child: ListView.builder(
-          itemCount: apps.length,
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) {
-            return AppInstalledTile(
-              app: apps[index] as ApplicationWithIcon,
-            );
-          }),
+      padding: const EdgeInsets.all(15.0),
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        runAlignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: MediaQuery.of(context).size.width * 0.04,
+        runSpacing: 4,
+        direction: Axis.horizontal,
+        children: [
+          for (var app in apps)
+            AppInstalledTile(
+              app: app as ApplicationWithIcon,
+            ),
+        ],
+      ),
     );
   }
 }

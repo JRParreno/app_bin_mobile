@@ -4,6 +4,7 @@ import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/core/routes/app_route.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/repositories/profile_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,7 @@ class _AppBinState extends State<AppBin> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (ctx) => ProfileBloc()),
+        BlocProvider(create: (ctx) => AppsBloc()),
       ],
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (ctx, state) {

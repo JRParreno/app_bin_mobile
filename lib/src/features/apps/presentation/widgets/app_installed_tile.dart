@@ -11,24 +11,26 @@ class AppInstalledTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Image.memory(
-            app.icon,
-            height: 40,
-            width: 40,
+    return SizedBox(
+      height: 80,
+      width: MediaQuery.of(context).size.width * 0.20,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Image.memory(
+              app.icon,
+              height: 40,
+              width: 40,
+            ),
           ),
-        ),
-        Text(app.appName),
-        const Divider(
-          color: Colors.amber,
-        ),
-        const SizedBox(
-          height: 30,
-        )
-      ],
+          Text(app.appName, maxLines: 1),
+          const Divider(
+            color: Colors.amber,
+          ),
+        ],
+      ),
     );
   }
 }

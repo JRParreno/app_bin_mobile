@@ -1,8 +1,11 @@
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
+import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/persistent_bottom_navigation.dart';
-import 'package:app_bin_mobile/src/features/stats/apps_statistics_screen.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:device_apps/device_apps.dart';
@@ -42,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final _buildScreens = [
+    const AppsScreen(),
     const BlockScreen(),
     const AppsStatisticsScreen(),
     const ProfileScreen(),
@@ -49,6 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.cube_box),
+        title: ("Apps"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.shield),
         title: ("Blocking"),
@@ -80,11 +90,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SizedBox(
-          child: PersistentBottomNavigation(
-            buildScreens: _buildScreens,
-            controller: _controller,
-            navBarsItems: _navBarsItems(),
+        child: BlocProvider(
+          create: (context) => AppStatsBloc()..add(AppStatsCurrentUsage()),
+          child: SizedBox(
+            child: PersistentBottomNavigation(
+              buildScreens: _buildScreens,
+              controller: _controller,
+              navBarsItems: _navBarsItems(),
+            ),
           ),
         ),
       ),
