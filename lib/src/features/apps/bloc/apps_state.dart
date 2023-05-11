@@ -28,3 +28,5 @@ class AppsLoaded extends AppsState {
   @override
   List<Object?> get props => [applications];
 }
+
+class NoAppsState extends AppsState {}

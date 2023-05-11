@@ -12,7 +12,7 @@ class AppInstalledTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: 100,
       width: MediaQuery.of(context).size.width * 0.20,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -24,6 +24,9 @@ class AppInstalledTile extends StatelessWidget {
               height: 40,
               width: 40,
             ),
+          ),
+          const SizedBox(
+            height: 10,
           ),
           Text(app.appName, maxLines: 1),
           const Divider(

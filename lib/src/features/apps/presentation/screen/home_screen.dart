@@ -1,6 +1,6 @@
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
-import 'package:app_bin_mobile/src/features/apps/presentation/screen/block_screen.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/persistent_bottom_navigation.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';

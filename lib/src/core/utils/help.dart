@@ -173,10 +173,14 @@ class Helper {
   }
 
   static List<AppUsageChartData> getAppUsageChartData(AppStatsLoaded state) {
-    return state.appUsage.map((e) {
-      return AppUsageChartData(
-          dayName: Helper.getDayName(e.last.startDate.weekday),
-          totalHrs: Helper.getMaxHours(e));
-    }).toList();
+    final apps = state.appUsage.where((e) => e.isNotEmpty).toList();
+
+    return apps.isNotEmpty
+        ? apps.map((e) {
+            return AppUsageChartData(
+                dayName: Helper.getDayName(e.last.startDate.weekday),
+                totalHrs: Helper.getMaxHours(e));
+          }).toList()
+        : [];
   }
 }
