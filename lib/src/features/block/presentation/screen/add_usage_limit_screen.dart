@@ -1,6 +1,7 @@
 import 'package:app_bin_mobile/src/core/bloc/common/common_state.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/common_widget/custom_appbar.dart';
+import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_apps.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/widget/usage_limit/apps_tile.dart';
@@ -59,6 +60,10 @@ class _AddUsageLimitState extends State<AddUsageLimitScreen> {
     );
 
     EasyLoading.showSuccess("Saving please wait..");
+
+    final appPackages = apps.map((e) => e.packageName);
+
+    await LocalStorage.storeLocalStorage('_whiteList', appPackages.join(', '));
 
     await Future.delayed(const Duration(seconds: 1), () {
       EasyLoading.dismiss();

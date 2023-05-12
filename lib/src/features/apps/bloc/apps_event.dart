@@ -72,3 +72,25 @@ class AppsSearchEvent extends AppsEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class AppsLoadInitEvent extends AppsEvent {
+  final List<String> whiteList;
+
+  const AppsLoadInitEvent({
+    required this.whiteList,
+  });
+
+  AppsLoadInitEvent copyWith({
+    List<String>? whiteList,
+  }) {
+    return AppsLoadInitEvent(
+      whiteList: whiteList ?? this.whiteList,
+    );
+  }
+
+  @override
+  String toString() => 'AppsLoadInitEvent(applications: $whiteList)';
+
+  @override
+  List<Object?> get props => [whiteList];
+}

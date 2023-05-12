@@ -1,3 +1,4 @@
+import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_apps.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:equatable/equatable.dart';
@@ -11,6 +12,48 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
     on<AppsLoadEvent>(_appsLoadEvent);
     on<AppsWhiteListEvent>(_appsWhiteListEvent);
     on<AppsSearchEvent>(_appsSearchEvent);
+    on<AppsLoadInitEvent>(_appsLoadInitEvent);
+  }
+
+  void _appsLoadInitEvent(
+      AppsLoadInitEvent event, Emitter<AppsState> emit) async {
+    final tempList = await DeviceApps.getInstalledApplications(
+      includeAppIcons: true,
+    );
+
+    final sortTempList = Helper.filterApps(
+      tempList
+        ..sort(
+          (a, b) {
+            return a.appName.toLowerCase().compareTo(b.appName.toLowerCase());
+          },
+        ),
+    );
+
+    if (event.whiteList.isNotEmpty) {
+      final tempAppBinsApps = convertAppToAppBinsApps(
+        appBinApps: [],
+        applications: sortTempList,
+      );
+
+      final appBinApps = tempAppBinsApps.map(
+        (e) {
+          final appExists = event.whiteList
+              .where((element) => e.application.packageName == element)
+              .toList();
+          return AppBinApps(
+            application: e.application,
+            isBlock: appExists.isNotEmpty,
+          );
+        },
+      ).toList();
+
+      return emit(
+        AppsLoaded(
+          applications: appBinApps,
+        ),
+      );
+    }
   }
 
   void _appsSearchEvent(AppsSearchEvent event, Emitter<AppsState> emit) {
