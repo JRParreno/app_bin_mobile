@@ -1,7 +1,11 @@
 import 'package:app_bin_mobile/gen/assets.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
+import 'package:app_bin_mobile/src/core/utils/help.dart';
+import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/widget/usage_limit/usage_limit.dart';
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlockScreen extends StatefulWidget {
   static const String routeName = '/block';
@@ -13,6 +17,29 @@ class BlockScreen extends StatefulWidget {
 
 class _BlockScreenState extends State<BlockScreen> {
   @override
+  void initState() {
+    getApps();
+    super.initState();
+  }
+
+  void getApps() async {
+    final tempList = await DeviceApps.getInstalledApplications(
+      includeAppIcons: true,
+    );
+
+    Future.delayed(const Duration(seconds: 2), () {
+      BlocProvider.of<AppsBloc>(context).add(
+        AppsLoadEvent(
+          applications: Helper.filterApps(tempList
+            ..sort((a, b) {
+              return a.appName.toLowerCase().compareTo(b.appName.toLowerCase());
+            })),
+        ),
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -22,8 +49,8 @@ class _BlockScreenState extends State<BlockScreen> {
       ),
       body: Column(
         children: [
-          Expanded(child: Assets.json.socialMediaInfluencer.lottie()),
-          const Expanded(child: UsageLimit()),
+          Flexible(child: Assets.json.socialMediaInfluencer.lottie()),
+          const Flexible(child: UsageLimit()),
         ],
       ),
       // floatingActionButton: FloatingActionButton(

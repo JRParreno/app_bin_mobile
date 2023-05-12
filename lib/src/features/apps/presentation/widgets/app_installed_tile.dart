@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class AppInstalledTile extends StatelessWidget {
   final ApplicationWithIcon app;
+  final bool isBlock;
 
   const AppInstalledTile({
     super.key,
     required this.app,
+    this.isBlock = false,
   });
 
   @override

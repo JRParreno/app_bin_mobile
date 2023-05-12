@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 
 class AppsTile extends StatelessWidget {
   final ApplicationWithIcon app;
+  final bool isBlock;
+  final Function(bool value) isOnchanged;
 
   const AppsTile({
     super.key,
     required this.app,
+    required this.isOnchanged,
+    this.isBlock = false,
   });
 
   @override
@@ -34,8 +38,10 @@ class AppsTile extends StatelessWidget {
             ],
           ),
           Checkbox(
-            value: false,
-            onChanged: ((value) {}),
+            value: isBlock,
+            onChanged: ((value) {
+              isOnchanged(value ?? false);
+            }),
           ),
         ],
       ),

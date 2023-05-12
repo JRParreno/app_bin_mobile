@@ -14,17 +14,61 @@ class AppsLoadEvent extends AppsEvent {
     required this.applications,
   });
 
-  AppsLoaded copyWith({
+  AppsLoadEvent copyWith({
     List<Application>? applications,
   }) {
-    return AppsLoaded(
+    return AppsLoadEvent(
       applications: applications ?? this.applications,
     );
   }
 
   @override
-  String toString() => 'AppsLoaded(applications: $applications)';
+  String toString() => 'AppsLoadEvent(applications: $applications)';
 
   @override
   List<Object?> get props => [applications];
+}
+
+class AppsWhiteListEvent extends AppsEvent {
+  final List<Application> applications;
+
+  const AppsWhiteListEvent({
+    required this.applications,
+  });
+
+  AppsWhiteListEvent copyWith({
+    List<Application>? applications,
+  }) {
+    return AppsWhiteListEvent(
+      applications: applications ?? this.applications,
+    );
+  }
+
+  @override
+  String toString() => 'AppsWhiteListEvent(applications: $applications)';
+
+  @override
+  List<Object?> get props => [applications];
+}
+
+class AppsSearchEvent extends AppsEvent {
+  final String query;
+
+  const AppsSearchEvent({
+    required this.query,
+  });
+
+  AppsSearchEvent copyWith({
+    String? query,
+  }) {
+    return AppsSearchEvent(
+      query: query ?? this.query,
+    );
+  }
+
+  @override
+  String toString() => 'AppsSearchEvent(applications: $query)';
+
+  @override
+  List<Object?> get props => [query];
 }

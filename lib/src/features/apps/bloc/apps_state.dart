@@ -8,17 +8,21 @@ abstract class AppsState extends Equatable {
 }
 
 class AppsLoaded extends AppsState {
-  final List<Application> applications;
+  final List<AppBinApps> applications;
+  final String? query;
 
   const AppsLoaded({
     required this.applications,
+    this.query,
   });
 
   AppsLoaded copyWith({
-    List<Application>? applications,
+    List<AppBinApps>? applications,
+    String? query,
   }) {
     return AppsLoaded(
       applications: applications ?? this.applications,
+      query: query ?? this.query,
     );
   }
 
@@ -26,7 +30,7 @@ class AppsLoaded extends AppsState {
   String toString() => 'AppsLoaded(applications: $applications)';
 
   @override
-  List<Object?> get props => [applications];
+  List<Object?> get props => [applications, query];
 }
 
 class NoAppsState extends AppsState {}

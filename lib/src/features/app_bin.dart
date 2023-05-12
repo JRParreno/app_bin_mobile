@@ -9,6 +9,7 @@ import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -74,6 +75,7 @@ class _AppBinState extends State<AppBin> {
                 theme: ThemeData(
                   primarySwatch: Colors.blue,
                 ),
+                builder: EasyLoading.init(),
                 onGenerateRoute: generateRoute,
                 home: state is ProfileLoaded
                     ? const HomeScreen()

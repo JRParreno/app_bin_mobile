@@ -1,9 +1,10 @@
+import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_apps.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/app_installed_tile.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
 class AppInstalledList extends StatelessWidget {
-  final List<Application> apps;
+  final List<AppBinApps> apps;
 
   const AppInstalledList({
     super.key,
@@ -24,7 +25,8 @@ class AppInstalledList extends StatelessWidget {
         children: [
           for (var app in apps)
             AppInstalledTile(
-              app: app as ApplicationWithIcon,
+              app: app.application as ApplicationWithIcon,
+              isBlock: app.isBlock,
             ),
         ],
       ),
