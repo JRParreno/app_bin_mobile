@@ -46,3 +46,5 @@ class ProfileLoaded extends ProfileState {
   @override
   List<Object?> get props => [profile];
 }
+
+class ProfileLogout extends ProfileState {}

@@ -4,7 +4,8 @@ import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
 import 'package:flutter/material.dart';
 
 class MenuOptions extends StatelessWidget {
-  const MenuOptions({super.key});
+  final BuildContext ctx;
+  const MenuOptions({super.key, required this.ctx});
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +70,16 @@ class MenuOptions extends StatelessWidget {
             child: ListTile(
               title: const CustomText(text: 'Logout'),
               leading: const Icon(Icons.logout),
-              onTap: () {
-                ProfileUtils.handleLogout(context);
+              onTap: () async {
+                ProfileUtils.testAdaptiveAlert(ctx);
+                // final user = await LocalStorage.readLocalStorage('_user');
+
+                // if (user == null) {
+                //   Future.delayed(const Duration(milliseconds: 500), () {
+                //     BlocProvider.of<ProfileBloc>(context)
+                //         .add(SetProfileLogoutEvent());
+                //   });
+                // }
               },
             ),
           ),

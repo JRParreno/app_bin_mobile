@@ -17,3 +17,5 @@ class SetProfileEvent extends ProfileEvent {
   @override
   List<Object?> get props => [profile];
 }
+
+class SetProfileLogoutEvent extends ProfileEvent {}

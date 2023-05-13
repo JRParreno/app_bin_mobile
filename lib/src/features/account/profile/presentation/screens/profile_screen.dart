@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              const MenuOptions(),
+              MenuOptions(ctx: context),
             ],
           ),
         ),

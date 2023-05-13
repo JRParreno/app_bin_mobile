@@ -1,4 +1,5 @@
 import 'package:app_bin_mobile/src/core/bloc/common/common_event.dart';
+import 'package:app_bin_mobile/src/core/bloc/common/common_state.dart';
 import 'package:app_bin_mobile/src/core/bloc/profile/profile_bloc.dart';
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/core/routes/app_route.dart';
@@ -7,6 +8,7 @@ import 'package:app_bin_mobile/src/features/account/profile/data/repositories/pr
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
+import 'package:app_bin_mobile/src/route_obeserver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -74,25 +76,32 @@ class _AppBinState extends State<AppBin> {
         BlocProvider(create: (ctx) => ProfileBloc()),
         BlocProvider(create: (ctx) => AppsBloc()),
       ],
-      child: BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (ctx, state) {
-          initialization(ctx);
+      child: ScreenUtilInit(
+        designSize: const Size(375, 812),
+        minTextAdapt: true,
+        builder: (BuildContext context, Widget? child) {
+          return MaterialApp(
+            navigatorObservers: [
+              MyNavigatorObserver(),
+            ],
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            builder: EasyLoading.init(),
+            onGenerateRoute: generateRoute,
+            home: BlocBuilder<ProfileBloc, ProfileState>(
+              builder: (ctx, state) {
+                if (state is InitialState) {
+                  initialization(ctx);
+                }
 
-          return ScreenUtilInit(
-            designSize: const Size(375, 812),
-            minTextAdapt: true,
-            builder: (BuildContext context, Widget? child) {
-              return MaterialApp(
-                theme: ThemeData(
-                  primarySwatch: Colors.blue,
-                ),
-                builder: EasyLoading.init(),
-                onGenerateRoute: generateRoute,
-                home: state is ProfileLoaded
-                    ? const HomeScreen()
-                    : const OnBoardingScreen(),
-              );
-            },
+                if (state is ProfileLoaded) {
+                  return const HomeScreen();
+                } else {
+                  return const OnBoardingScreen();
+                }
+              },
+            ),
           );
         },
       ),

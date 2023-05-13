@@ -13,58 +13,63 @@ class OnBoardingScreen extends StatefulWidget {
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   void handleGetStarted() {
-    Navigator.of(context).popAndPushNamed(LoginScreen.routeName);
+    Navigator.of(context).pushNamed(LoginScreen.routeName);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SizedBox(
-          child: Column(
-            children: [
-              Expanded(
-                flex: 1,
-                child: SizedBox(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Assets.images.appbin.image(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const CustomText(
-                        text: "Welcome to App Bin",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SizedBox(
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Assets.images.appbin.image(),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const CustomText(
-                        text: "Your Application Management Usage",
-                        style: TextStyle(
-                          fontSize: 16,
+                        const CustomText(
+                          text: "Welcome to App Bin",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const CustomText(
+                          text: "Your Application Management Usage",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(10.0),
-                  width: double.infinity,
-                  child: CustomBtn(
-                    onTap: handleGetStarted,
-                    label: "Get Started",
+                Expanded(
+                  flex: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(10.0),
+                    width: double.infinity,
+                    child: CustomBtn(
+                      onTap: handleGetStarted,
+                      label: "Get Started",
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

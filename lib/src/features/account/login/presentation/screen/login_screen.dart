@@ -68,9 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await LocalStorage.storeLocalStorage('_user', profile.toJson());
       handleSetProfileBloc(profile);
       Future.delayed(const Duration(milliseconds: 500), () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
+        Navigator.of(context).pushNamed(
           HomeScreen.routeName,
-          (route) => false,
         );
       });
     }).catchError((onError) {

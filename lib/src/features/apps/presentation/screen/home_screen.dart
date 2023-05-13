@@ -88,15 +88,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: BlocProvider(
-          create: (context) => AppStatsBloc()..add(AppStatsCurrentUsage()),
-          child: SizedBox(
-            child: PersistentBottomNavigation(
-              buildScreens: _buildScreens,
-              controller: _controller,
-              navBarsItems: _navBarsItems(),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: BlocProvider(
+            create: (context) => AppStatsBloc()..add(AppStatsCurrentUsage()),
+            child: SizedBox(
+              child: PersistentBottomNavigation(
+                buildScreens: _buildScreens,
+                controller: _controller,
+                navBarsItems: _navBarsItems(),
+              ),
             ),
           ),
         ),
