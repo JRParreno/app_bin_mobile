@@ -1,5 +1,6 @@
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/widgets/menu_options.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,33 +24,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
-              CircleAvatar(
-                backgroundImage: profile?.profilePhoto != null
-                    ? NetworkImage(profile!.profilePhoto!)
-                    : null,
-                radius: 50,
-                child: profile?.profilePhoto != null
-                    ? null
-                    : const Icon(Icons.person, size: 50),
+              Flexible(
+                child: Center(
+                  child: SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: profile?.profilePhoto != null
+                              ? NetworkImage(profile!.profilePhoto!)
+                              : null,
+                          radius: 50,
+                          child: profile?.profilePhoto != null
+                              ? null
+                              : const Icon(Icons.person, size: 50),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomText(
+                          text: '${profile?.firstName} ${profile?.lastName}',
+                          style: const TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              CustomText(
-                text: '${profile?.firstName} ${profile?.lastName}',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              )
+              const MenuOptions(),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ProfileUtils.handleLogout(context);
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.logout),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen
 import 'package:app_bin_mobile/src/features/block/presentation/screen/add_usage_limit_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/screen/prompt_block_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,11 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
             return const ProfileScreen();
           case AddUsageLimitScreen.routeName:
             return const AddUsageLimitScreen();
+          case PromptBlockScreen.routeName:
+            final args = settings.arguments! as PromptBlockArgs;
+            return PromptBlockScreen(
+              args: args,
+            );
         }
         return const Scaffold(
           resizeToAvoidBottomInset: false,

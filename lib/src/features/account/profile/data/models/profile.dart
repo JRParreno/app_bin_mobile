@@ -8,6 +8,9 @@ class Profile {
   final String lastName;
   final String email;
   final String? profilePhoto;
+  final String? parentUser;
+  final String? childUser;
+
   Profile({
     required this.pk,
     required this.username,
@@ -15,6 +18,8 @@ class Profile {
     required this.lastName,
     required this.email,
     this.profilePhoto,
+    this.parentUser,
+    this.childUser,
   });
 
   Profile copyWith({
@@ -24,6 +29,8 @@ class Profile {
     String? lastName,
     String? email,
     String? profilePhoto,
+    String? parentUser,
+    String? childUser,
   }) {
     return Profile(
       pk: pk ?? this.pk,
@@ -32,6 +39,8 @@ class Profile {
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
       profilePhoto: profilePhoto ?? this.profilePhoto,
+      parentUser: parentUser ?? this.parentUser,
+      childUser: childUser ?? this.childUser,
     );
   }
 
@@ -43,6 +52,8 @@ class Profile {
       'lastName': lastName,
       'email': email,
       'profilePhoto': profilePhoto,
+      'parentUser': parentUser,
+      'childUser': childUser,
     };
   }
 
@@ -53,6 +64,9 @@ class Profile {
       firstName: map['firstName'] as String,
       lastName: map['lastName'] as String,
       email: map['email'] as String,
+      parentUser:
+          map['parentUser'] != null ? map['parentUser'] as String : null,
+      childUser: map['childUser'] != null ? map['childUser'] as String : null,
       profilePhoto:
           map['profilePhoto'] != null ? map['profilePhoto'] as String : null,
     );
@@ -65,7 +79,7 @@ class Profile {
 
   @override
   String toString() {
-    return 'Profile(pk: $pk, username: $username, firstName: $firstName, lastName: $lastName, email: $email, profilePhoto: $profilePhoto)';
+    return 'Profile(pk: $pk, username: $username, firstName: $firstName, lastName: $lastName, email: $email, profilePhoto: $profilePhoto, parentUser: $parentUser, childUser: $childUser)';
   }
 
   @override
@@ -77,7 +91,9 @@ class Profile {
         other.firstName == firstName &&
         other.lastName == lastName &&
         other.email == email &&
-        other.profilePhoto == profilePhoto;
+        other.profilePhoto == profilePhoto &&
+        other.childUser == childUser &&
+        other.parentUser == parentUser;
   }
 
   @override
@@ -87,6 +103,8 @@ class Profile {
         firstName.hashCode ^
         lastName.hashCode ^
         email.hashCode ^
+        parentUser.hashCode ^
+        childUser.hashCode ^
         profilePhoto.hashCode;
   }
 }
