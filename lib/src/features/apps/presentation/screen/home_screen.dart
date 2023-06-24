@@ -33,14 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
       myApps = tempList
           .where((element) =>
               element.category == ApplicationCategory.game ||
-              element.category == ApplicationCategory.social)
+              element.category == ApplicationCategory.social ||
+              element.category == ApplicationCategory.productivity)
           .toList();
     });
 
     return tempList
         .where((element) =>
             element.category == ApplicationCategory.game ||
-            element.category == ApplicationCategory.social)
+            element.category == ApplicationCategory.social ||
+            element.category == ApplicationCategory.productivity)
         .toList();
   }
 
@@ -88,20 +90,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: BlocProvider(
-            create: (context) => AppStatsBloc()..add(AppStatsCurrentUsage()),
-            child: SizedBox(
-              child: PersistentBottomNavigation(
-                buildScreens: _buildScreens,
-                controller: _controller,
-                navBarsItems: _navBarsItems(),
-              ),
+    return Scaffold(
+      body: SafeArea(
+        child: BlocProvider(
+          create: (context) => AppStatsBloc()
+            ..add(AppStatsCurrentUsage(
+              startTime: DateTime.now(),
+              endTime: DateTime.now(),
+            )),
+          child: SizedBox(
+            child: PersistentBottomNavigation(
+              buildScreens: _buildScreens,
+              controller: _controller,
+              navBarsItems: _navBarsItems(),
             ),
           ),
         ),

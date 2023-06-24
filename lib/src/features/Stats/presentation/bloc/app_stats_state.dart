@@ -10,7 +10,7 @@ abstract class AppStatsState extends Equatable {
 }
 
 class AppStatsLoaded extends AppStatsState {
-  final List<List<AppUsageInfo>> appUsage;
+  final List<List<AppBinStats>> appUsage;
   final DateTime? start;
   final DateTime? end;
 

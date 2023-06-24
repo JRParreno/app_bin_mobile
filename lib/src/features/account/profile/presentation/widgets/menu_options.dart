@@ -1,7 +1,9 @@
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
+import 'package:app_bin_mobile/src/features/device/view_device/presentation/screen/view_device_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class MenuOptions extends StatelessWidget {
   final BuildContext ctx;
@@ -41,9 +43,16 @@ class MenuOptions extends StatelessWidget {
           Card(
             margin: const EdgeInsets.only(bottom: 10),
             child: ListTile(
-              title: const CustomText(text: "Add Device"),
+              title: const CustomText(text: "View Device(s)"),
               leading: const Icon(Icons.device_hub),
-              onTap: () {},
+              onTap: () {
+                PersistentNavBarNavigator.pushNewScreen(
+                  context,
+                  screen: const ViewDeviceScreen(),
+                  withNavBar: true, // OPTIONAL VALUE. True by default.
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                );
+              },
               trailing: const Icon(Icons.chevron_right),
             ),
           ),

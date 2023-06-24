@@ -3,6 +3,7 @@ import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PromptBlockArgs {
   final ApplicationWithIcon app;
@@ -44,19 +45,24 @@ class _PromptBlockScreenState extends State<PromptBlockScreen> {
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomText(
-                    text: app.appName,
-                    style:
-                        const TextStyle(color: ColorName.error, fontSize: 30),
-                  ),
-                  const CustomText(
-                    text: " is Blocked",
-                    style: TextStyle(fontSize: 30, color: Colors.white),
-                  )
-                ],
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomText(
+                      text: app.appName,
+                      style: TextStyle(
+                        color: ColorName.error,
+                        fontSize: 25.sp,
+                      ),
+                    ),
+                    CustomText(
+                      text: " is Blocked",
+                      style: TextStyle(fontSize: 25.sp, color: Colors.white),
+                    )
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 20,

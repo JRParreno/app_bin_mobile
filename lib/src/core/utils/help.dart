@@ -1,5 +1,8 @@
 import 'dart:async';
+// ignore: depend_on_referenced_packages
+import 'package:collection/collection.dart'; // You have to add this manually, for some reason it cannot be added automatically
 
+import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_stats.dart';
 import 'package:app_bin_mobile/src/features/stats/models/chart_data.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_usage/app_usage.dart';
@@ -38,7 +41,7 @@ class Helper {
     return result;
   }
 
-  static FutureOr<List<AppUsageInfo>> getCurrentAppUsage({
+  static FutureOr<List<AppBinStats>> getCurrentAppUsage({
     required DateTime startTime,
     required DateTime endTime,
   }) async {
@@ -54,7 +57,7 @@ class Helper {
       final tempLast = appUsages.last;
       for (var i = 0; i < tempLast.length; i++) {
         final element = tempLast[i];
-        duration += element.usage;
+        duration += Duration(hours: element.hours, minutes: element.minutes);
       }
     }
     return duration;
@@ -87,11 +90,13 @@ class Helper {
     }).toList();
   }
 
-  static FutureOr<List<List<AppUsageInfo>>> getAppUsage({
+  static FutureOr<List<List<AppBinStats>>> getAppUsage({
     DateTime? startTime,
     DateTime? endTime,
   }) async {
     List<List<AppUsageInfo>> weekUsageInfo = [];
+    List<List<AppBinStats>> appBinStats = [];
+
     final date = startTime ?? DateTime.now();
     final startDate = endTime != null
         ? getDate(endTime.subtract(Duration(days: endTime.weekday - 1)))
@@ -120,16 +125,22 @@ class Helper {
       if (date.day == element.day) break;
     }
 
-    return weekUsageInfo;
+    for (var i = 0; i < weekUsageInfo.length; i++) {
+      final element = weekUsageInfo[i];
+      final appBinStatsList = await convertToListAppBinStats(element);
+      appBinStats.add(appBinStatsList);
+    }
+
+    return appBinStats;
   }
 
-  static int getMaxHours(List<AppUsageInfo> appUsageInfos) {
-    int total = 0;
+  static double getMaxHours(List<AppUsageInfo> appUsageInfos) {
+    double total = 0;
     for (var i = 0; i < appUsageInfos.length; i++) {
       final element = appUsageInfos[i];
-      if (total < element.usage.inHours) {
-        total = element.usage.inHours;
-      }
+      final minutesToHrs = element.usage.inMinutes * 0.0166667;
+      final hours = element.usage.inHours;
+      total = hours + minutesToHrs;
     }
     return total;
   }
@@ -174,13 +185,64 @@ class Helper {
 
   static List<AppUsageChartData> getAppUsageChartData(AppStatsLoaded state) {
     final apps = state.appUsage.where((e) => e.isNotEmpty).toList();
+    Duration duration = const Duration();
+
+    if (apps.isNotEmpty && apps.last.isNotEmpty) {
+      final tempLast = apps.last;
+      for (var i = 0; i < tempLast.length; i++) {
+        final element = tempLast[i];
+        duration += Duration(hours: element.hours, minutes: element.minutes);
+      }
+    }
 
     return apps.isNotEmpty
         ? apps.map((e) {
             return AppUsageChartData(
                 dayName: Helper.getDayName(e.last.startDate.weekday),
-                totalHrs: Helper.getMaxHours(e));
+                duration: duration);
           }).toList()
         : [];
+  }
+
+  static AppBinStats convertToAppBinStats(AppUsageInfo appUsageInfo) {
+    return AppBinStats(
+      id: '',
+      appServiceId: '',
+      appName: appUsageInfo.appName,
+      packageName: appUsageInfo.packageName,
+      hours: appUsageInfo.usage.inHours,
+      minutes: appUsageInfo.usage.inMinutes,
+      startDate: appUsageInfo.startDate,
+      endDate: appUsageInfo.endDate,
+    );
+  }
+
+  static Future<List<AppBinStats>> convertToListAppBinStats(
+      List<AppUsageInfo> appUsageInfos) async {
+    final List<AppBinStats> tempAppBinStats = [];
+
+    final tempList =
+        await DeviceApps.getInstalledApplications(includeAppIcons: true);
+    tempList
+        .where((element) =>
+            element.category == ApplicationCategory.game ||
+            element.category == ApplicationCategory.social ||
+            element.category == ApplicationCategory.productivity)
+        .toList();
+
+    for (var i = 0; i < appUsageInfos.length; i++) {
+      final appUsageInfo = appUsageInfos[i];
+      final app = tempList.firstWhereOrNull(
+          (element) => element.packageName == appUsageInfo.packageName);
+      final appBinStats = convertToAppBinStats(appUsageInfo);
+
+      if (app != null) {
+        final appIcon = app as ApplicationWithIcon;
+        appBinStats.copyWith(icon: appIcon.icon);
+      }
+      tempAppBinStats.add(convertToAppBinStats(appUsageInfo));
+    }
+
+    return tempAppBinStats;
   }
 }

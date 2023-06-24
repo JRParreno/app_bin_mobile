@@ -1,9 +1,9 @@
 class AppUsageChartData {
   final String dayName;
-  final int totalHrs;
+  final Duration duration;
 
   AppUsageChartData({
     required this.dayName,
-    required this.totalHrs,
+    required this.duration,
   });
 }

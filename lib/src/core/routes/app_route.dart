@@ -6,6 +6,7 @@ import 'package:app_bin_mobile/src/features/block/presentation/screen/add_usage_
 import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/prompt_block_screen.dart';
+import 'package:app_bin_mobile/src/features/device/view_device/presentation/screen/view_device_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,8 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
             return PromptBlockScreen(
               args: args,
             );
+          case ViewDeviceScreen.routeName:
+            return const ViewDeviceScreen();
         }
         return const Scaffold(
           resizeToAvoidBottomInset: false,

@@ -1,3 +1,4 @@
+import 'package:app_bin_mobile/src/features/apps/presentation/widgets/app_widget.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/prompt_block_screen.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
@@ -24,29 +25,8 @@ class AppInstalledTile extends StatelessWidget {
           pageTransitionAnimation: PageTransitionAnimation.cupertino,
         );
       },
-      child: SizedBox(
-        height: 100,
-        width: MediaQuery.of(context).size.width * 0.20,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Image.memory(
-                app.icon,
-                height: 40,
-                width: 40,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(app.appName, maxLines: 1),
-            const Divider(
-              color: Colors.amber,
-            ),
-          ],
-        ),
+      child: AppWidget(
+        app: app,
       ),
     );
   }
