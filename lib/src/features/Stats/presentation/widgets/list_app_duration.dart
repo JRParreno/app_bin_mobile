@@ -20,7 +20,8 @@ class ListAppDuration extends StatelessWidget {
       title += '${info.hours} hrs ';
     }
     if (info.minutes > 0) {
-      title += '${info.minutes} mins ';
+      title +=
+          '${info.minutes > 60 ? (info.minutes / 60).round() : info.minutes} mins';
     }
     return title;
   }
