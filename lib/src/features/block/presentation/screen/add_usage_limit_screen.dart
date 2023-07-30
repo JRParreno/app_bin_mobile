@@ -283,6 +283,8 @@ class _AddUsageLimitState extends State<AddUsageLimitScreen> {
   }
 
   Future<void> handleDeleteSchedule() async {
+    // ignore: use_build_context_synchronously
+    BlocProvider.of<AppsBloc>(context).add(AppsDeleteScheduleEvent());
     await LocalStorage.deleteLocalStorage(AppConstant.schedule);
     setState(() {
       mySchedule = null;
@@ -312,6 +314,10 @@ class _AddUsageLimitState extends State<AddUsageLimitScreen> {
         hours: duration.inHours,
         minutes: duration.inMinutes,
       );
+
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<AppsBloc>(context)
+          .add(AppsScheduleEvent(schedule: hourlySchedule));
 
       await LocalStorage.storeLocalStorage(
           AppConstant.schedule, hourlySchedule.toJson());

@@ -94,3 +94,16 @@ class AppsLoadInitEvent extends AppsEvent {
   @override
   List<Object?> get props => [whiteList];
 }
+
+class AppsScheduleEvent extends AppsEvent {
+  final Schedule schedule;
+
+  const AppsScheduleEvent({
+    required this.schedule,
+  });
+
+  @override
+  List<Object?> get props => [schedule];
+}
+
+class AppsDeleteScheduleEvent extends AppsEvent {}

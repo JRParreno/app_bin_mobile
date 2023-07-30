@@ -1,5 +1,6 @@
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_apps.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/app_installed_tile.dart';
+import 'package:app_bin_mobile/src/features/block/data/models/schedule.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
@@ -8,10 +9,13 @@ class AppInstalledList extends StatelessWidget {
     super.key,
     required this.apps,
     this.disableOnTap = false,
+    this.schedule,
   });
 
   final bool disableOnTap;
+
   final List<AppBinApps> apps;
+  final Schedule? schedule;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,7 @@ class AppInstalledList extends StatelessWidget {
               app: app.application as ApplicationWithIcon,
               isBlock: app.isBlock,
               disableOnTap: disableOnTap,
+              schedule: schedule,
             ),
         ],
       ),

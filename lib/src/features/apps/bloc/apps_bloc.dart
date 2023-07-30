@@ -1,5 +1,6 @@
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_apps.dart';
+import 'package:app_bin_mobile/src/features/block/data/models/schedule.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,8 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
     on<AppsWhiteListEvent>(_appsWhiteListEvent);
     on<AppsSearchEvent>(_appsSearchEvent);
     on<AppsLoadInitEvent>(_appsLoadInitEvent);
+    on<AppsScheduleEvent>(_appsScheduleEvent);
+    on<AppsDeleteScheduleEvent>(_appsDeleteScheduleEvent);
   }
 
   void _appsLoadInitEvent(
@@ -20,6 +23,7 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
     final tempList = await DeviceApps.getInstalledApplications(
       includeAppIcons: true,
     );
+    final state = this.state;
 
     final sortTempList = Helper.filterApps(
       tempList
@@ -51,6 +55,7 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
       return emit(
         AppsLoaded(
           applications: appBinApps,
+          schedule: state is AppsLoaded ? state.schedule : null,
         ),
       );
     }
@@ -64,6 +69,7 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
         AppsLoaded(
           applications: state.applications,
           query: event.query,
+          schedule: state.schedule,
         ),
       );
     }
@@ -75,8 +81,10 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
     return emit(
       AppsLoaded(
         applications: convertAppToAppBinsApps(
-            appBinApps: state is AppsLoaded ? state.applications : [],
-            applications: event.applications),
+          appBinApps: state is AppsLoaded ? state.applications : [],
+          applications: event.applications,
+        ),
+        schedule: state is AppsLoaded ? state.schedule : null,
       ),
     );
   }
@@ -101,6 +109,7 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
     return emit(
       AppsLoaded(
         applications: appBin,
+        schedule: state is AppsLoaded ? state.schedule : null,
       ),
     );
   }
@@ -130,5 +139,30 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
     return applications.map((e) {
       return AppBinApps(application: e, isBlock: isBlock);
     }).toList();
+  }
+
+  void _appsScheduleEvent(AppsScheduleEvent event, Emitter<AppsState> emit) {
+    final state = this.state;
+
+    if (state is AppsLoaded) {
+      emit(AppsLoaded(
+        applications: [...state.applications],
+        query: state.query,
+        schedule: event.schedule,
+      ));
+    }
+  }
+
+  void _appsDeleteScheduleEvent(
+      AppsDeleteScheduleEvent event, Emitter<AppsState> emit) {
+    final state = this.state;
+
+    if (state is AppsLoaded) {
+      emit(AppsLoaded(
+        applications: [...state.applications],
+        query: state.query,
+        schedule: null,
+      ));
+    }
   }
 }
