@@ -1,13 +1,20 @@
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/change_password_screen.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/update_account_screen.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/presentation/screen/view_device_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class MenuOptions extends StatelessWidget {
   final BuildContext ctx;
-  const MenuOptions({super.key, required this.ctx});
+  final VoidCallback onCallBack;
+  const MenuOptions({
+    super.key,
+    required this.ctx,
+    required this.onCallBack,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +33,12 @@ class MenuOptions extends StatelessWidget {
             child: ListTile(
               title: const CustomText(text: 'Update Information'),
               leading: const Icon(Icons.person),
-              onTap: () {},
+              onTap: () {
+                toNavigateScreen(
+                  screen: const UpdateAccountScreen(),
+                  context: context,
+                );
+              },
               trailing: const Icon(Icons.chevron_right),
               enableFeedback: true,
             ),
@@ -36,7 +48,12 @@ class MenuOptions extends StatelessWidget {
             child: ListTile(
               title: const CustomText(text: 'Change Password'),
               leading: const Icon(Icons.visibility_off),
-              onTap: () {},
+              onTap: () {
+                toNavigateScreen(
+                  screen: const ChangePasswordScreen(),
+                  context: context,
+                );
+              },
               trailing: const Icon(Icons.chevron_right),
             ),
           ),
@@ -46,11 +63,9 @@ class MenuOptions extends StatelessWidget {
               title: const CustomText(text: "View Device(s)"),
               leading: const Icon(Icons.device_hub),
               onTap: () {
-                PersistentNavBarNavigator.pushNewScreen(
-                  context,
+                toNavigateScreen(
                   screen: const ViewDeviceScreen(),
-                  withNavBar: true, // OPTIONAL VALUE. True by default.
-                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  context: context,
                 );
               },
               trailing: const Icon(Icons.chevron_right),
@@ -81,19 +96,23 @@ class MenuOptions extends StatelessWidget {
               leading: const Icon(Icons.logout),
               onTap: () async {
                 ProfileUtils.testAdaptiveAlert(ctx);
-                // final user = await LocalStorage.readLocalStorage('_user');
-
-                // if (user == null) {
-                //   Future.delayed(const Duration(milliseconds: 500), () {
-                //     BlocProvider.of<ProfileBloc>(context)
-                //         .add(SetProfileLogoutEvent());
-                //   });
-                // }
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  void toNavigateScreen(
+      {required BuildContext context, required Widget screen}) {
+    PersistentNavBarNavigator.pushNewScreen(
+      context,
+      screen: screen,
+      withNavBar: false, // OPTIONAL VALUE. True by default.
+      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+    ).whenComplete(() {
+      onCallBack();
+    });
   }
 }

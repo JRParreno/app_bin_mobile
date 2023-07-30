@@ -4,12 +4,14 @@ import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
 class AppInstalledList extends StatelessWidget {
-  final List<AppBinApps> apps;
-
   const AppInstalledList({
     super.key,
     required this.apps,
+    this.disableOnTap = false,
   });
+
+  final bool disableOnTap;
+  final List<AppBinApps> apps;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class AppInstalledList extends StatelessWidget {
             AppInstalledTile(
               app: app.application as ApplicationWithIcon,
               isBlock: app.isBlock,
+              disableOnTap: disableOnTap,
             ),
         ],
       ),

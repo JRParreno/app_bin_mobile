@@ -19,9 +19,9 @@ class LoginHeader extends StatelessWidget {
               const Divider(
                 color: Colors.transparent,
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   CustomText(
                     text: "Welcome to App Bin",
                     style: TextStyle(

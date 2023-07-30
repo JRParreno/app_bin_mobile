@@ -99,6 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       });
     });
+    // ignore: use_build_context_synchronously
     LoaderDialog.hide(context: context);
   }
 

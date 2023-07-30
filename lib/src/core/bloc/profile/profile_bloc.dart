@@ -15,6 +15,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<InitialEvent>(_initial);
     on<SetProfileEvent>(_setProfile);
     on<SetProfileLogoutEvent>(_setProfileLogoutEvent);
+    on<SetProfilePicture>(_setProfilePicture);
   }
 
   void _initial(InitialEvent event, Emitter<ProfileState> emit) {
@@ -28,5 +29,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   void _setProfileLogoutEvent(
       SetProfileLogoutEvent event, Emitter<ProfileState> emit) async {
     return emit(ProfileLogout());
+  }
+
+  void _setProfilePicture(SetProfilePicture event, Emitter<ProfileState> emit) {
+    final state = this.state;
+
+    if (state is ProfileLoaded) {
+      return emit(
+        ProfileLoaded(
+          profile: state.profile?.copyWith(profilePhoto: event.profilePhoto),
+        ),
+      );
+    }
   }
 }

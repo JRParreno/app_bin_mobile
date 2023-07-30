@@ -1,7 +1,11 @@
 import 'package:app_bin_mobile/src/features/account/login/presentation/screen/login_screen.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/change_password_screen.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/update_account_screen.dart';
+import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/update_profile_picture_screen.dart';
 import 'package:app_bin_mobile/src/features/account/signup/presentation/screen/signup_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/screen/add_block_app_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/add_usage_limit_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
@@ -41,6 +45,14 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
             );
           case ViewDeviceScreen.routeName:
             return const ViewDeviceScreen();
+          case ChangePasswordScreen.routeName:
+            return const ChangePasswordScreen();
+          case UpdateAccountScreen.routeName:
+            return const UpdateAccountScreen();
+          case UpdateProfilePcitureScreen.routeName:
+            return const UpdateProfilePcitureScreen();
+          case AddBlockAppScreen.routeName:
+            return const AddBlockAppScreen();
         }
         return const Scaffold(
           resizeToAvoidBottomInset: false,

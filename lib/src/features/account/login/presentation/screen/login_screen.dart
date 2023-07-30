@@ -81,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       });
     });
+    // ignore: use_build_context_synchronously
     LoaderDialog.hide(context: context);
   }
 

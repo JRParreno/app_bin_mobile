@@ -185,33 +185,39 @@ class Helper {
 
   static List<AppUsageChartData> getAppUsageChartData(AppStatsLoaded state) {
     final apps = state.appUsage.where((e) => e.isNotEmpty).toList();
-    Duration duration = const Duration();
+    final List<AppUsageChartData> chartData = [];
 
     if (apps.isNotEmpty && apps.last.isNotEmpty) {
-      final tempLast = apps.last;
-      for (var i = 0; i < tempLast.length; i++) {
-        final element = tempLast[i];
-        duration += Duration(hours: element.hours, minutes: element.minutes);
+      for (var i = 0; i < apps.length; i++) {
+        Duration duration = const Duration();
+
+        final parentElement = apps[i];
+
+        for (var j = 0; j < parentElement.length; j++) {
+          final element = parentElement[j];
+
+          duration += Duration(hours: element.hours, minutes: element.minutes);
+        }
+        chartData.add(
+          AppUsageChartData(
+              dayName: Helper.getDayName(parentElement.last.startDate.weekday),
+              duration: duration),
+        );
       }
     }
 
-    return apps.isNotEmpty
-        ? apps.map((e) {
-            return AppUsageChartData(
-                dayName: Helper.getDayName(e.last.startDate.weekday),
-                duration: duration);
-          }).toList()
-        : [];
+    return chartData;
   }
 
   static AppBinStats convertToAppBinStats(AppUsageInfo appUsageInfo) {
+    final minutes = appUsageInfo.usage.inMinutes;
     return AppBinStats(
       id: '',
       appServiceId: '',
       appName: appUsageInfo.appName,
       packageName: appUsageInfo.packageName,
       hours: appUsageInfo.usage.inHours,
-      minutes: appUsageInfo.usage.inMinutes,
+      minutes: minutes > 60 ? (minutes / 60).round() : minutes,
       startDate: appUsageInfo.startDate,
       endDate: appUsageInfo.endDate,
     );

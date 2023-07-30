@@ -37,7 +37,8 @@ class ListAppDuration extends StatelessWidget {
           final item = apps[index];
           final tempApp = currentApps
               .where(
-                (element) => element.packageName == item.packageName,
+                (element) =>
+                    element.packageName == item.packageName && item.minutes > 0,
               )
               .toList();
 

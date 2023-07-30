@@ -26,7 +26,7 @@ class SignupImpl extends SignupRepository {
         'data': error.data,
       };
     }).catchError((onError) {
-      final error = onError as DioError;
+      final error = onError as DioException;
 
       if (error.response != null && error.response!.data != null) {
         throw {

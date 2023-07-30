@@ -5,25 +5,29 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class AppInstalledTile extends StatelessWidget {
-  final ApplicationWithIcon app;
-  final bool isBlock;
-
   const AppInstalledTile({
     super.key,
     required this.app,
     this.isBlock = false,
+    this.disableOnTap = false,
   });
+
+  final ApplicationWithIcon app;
+  final bool isBlock;
+  final bool disableOnTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        PersistentNavBarNavigator.pushNewScreen(
-          context,
-          screen: PromptBlockScreen(args: PromptBlockArgs(app: app)),
-          withNavBar: false, // OPTIONAL VALUE. True by default.
-          pageTransitionAnimation: PageTransitionAnimation.cupertino,
-        );
+        if (!disableOnTap) {
+          PersistentNavBarNavigator.pushNewScreen(
+            context,
+            screen: PromptBlockScreen(args: PromptBlockArgs(app: app)),
+            withNavBar: false, // OPTIONAL VALUE. True by default.
+            pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          );
+        }
       },
       child: AppWidget(
         app: app,

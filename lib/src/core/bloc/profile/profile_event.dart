@@ -18,4 +18,13 @@ class SetProfileEvent extends ProfileEvent {
   List<Object?> get props => [profile];
 }
 
+class SetProfilePicture extends ProfileEvent {
+  final String profilePhoto;
+
+  const SetProfilePicture(this.profilePhoto);
+
+  @override
+  List<Object?> get props => [profilePhoto];
+}
+
 class SetProfileLogoutEvent extends ProfileEvent {}

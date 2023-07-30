@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:dio/dio.dart';
 
 class GetRefreshToken {
-  static Future refreshToken({required String refreshToken}) async {
+  static FutureOr refreshToken({required String refreshToken}) async {
     String url = '${AppConstant.apiUrl}o/token/';
     Map<String, dynamic> data = {
       'refresh_token': refreshToken,

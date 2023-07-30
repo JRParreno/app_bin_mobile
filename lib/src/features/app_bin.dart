@@ -33,13 +33,16 @@ class _AppBinState extends State<AppBin> {
       final whiteList = await LocalStorage.readLocalStorage('_whiteList');
 
       final userProfile = await ProfileRepositoryImpl().fetchProfile();
+      // ignore: use_build_context_synchronously
       setProfileBloc(profile: userProfile, ctx: ctx);
+      // ignore: use_build_context_synchronously
       setWhiteList(whiteList: whiteList.toString().split(', '), ctx: ctx);
     } else {
       await LocalStorage.deleteLocalStorage('_user');
       await LocalStorage.deleteLocalStorage('_refreshToken');
       await LocalStorage.deleteLocalStorage('_token');
       await LocalStorage.deleteLocalStorage('_whiteList');
+      // ignore: use_build_context_synchronously
       setProfileBloc(profile: null, ctx: ctx);
     }
     Future.delayed(const Duration(seconds: 2), () {

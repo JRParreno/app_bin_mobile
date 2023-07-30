@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:flutter/material.dart';
 
 class CommonDialog {
-  static Future<void> showMyDialog({
+  static FutureOr<void> showMyDialog({
     required BuildContext context,
     required String body,
     String? title,
