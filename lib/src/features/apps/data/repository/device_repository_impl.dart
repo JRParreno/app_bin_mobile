@@ -6,7 +6,7 @@ import 'package:app_bin_mobile/src/features/apps/data/repository/device_reposito
 class DeviceRepositoryImpl extends DeviceRepository {
   @override
   Future<Device?> getUserDevice({required String deviceCode}) async {
-    const String url = '${AppConstant.apiUrl}/device';
+    String url = '${AppConstant.apiUrl}/device?q=$deviceCode';
     return await ApiInterceptor.apiInstance().get(url).then((value) {
       final results = value.data['results'] as List<dynamic>;
 
@@ -27,8 +27,15 @@ class DeviceRepositoryImpl extends DeviceRepository {
     required String deviceCode,
     required String deviceName,
   }) async {
-    const String url = '${AppConstant.apiUrl}/device';
-    return await ApiInterceptor.apiInstance().get(url).then((value) {
+    const String url = '${AppConstant.apiUrl}/device-list';
+    final data = {"device_name": deviceName, "device_code": deviceCode};
+
+    return await ApiInterceptor.apiInstance()
+        .post(
+      url,
+      data: data,
+    )
+        .then((value) {
       final response = Device.fromMap(value.data);
 
       return response;
