@@ -1,5 +1,7 @@
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
+import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
+import 'package:app_bin_mobile/src/features/apps/data/repository/app_week_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
@@ -118,13 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getDeviceInfo() async {
     EasyLoading.showSuccess("Please wait..");
     final currentDeviceInfo = await LocalStorage.readLocalStorage('_device');
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    final String deviceCode = androidInfo.device;
+    final String deviceName = androidInfo.model;
 
     if (currentDeviceInfo == null) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      final String deviceCode = androidInfo.device;
-      final String deviceName = androidInfo.model;
-
       final tempDevice =
           await DeviceRepositoryImpl().getUserDevice(deviceCode: deviceCode);
 
@@ -135,6 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
             deviceCode: deviceCode, deviceName: deviceName);
       }
     }
+
+    await syncAppData(deviceCode);
+
     await Future.delayed(const Duration(seconds: 1), () {
       EasyLoading.dismiss();
     });
@@ -147,5 +151,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final device = await DeviceRepositoryImpl()
         .registerUserDevice(deviceCode: deviceCode, deviceName: deviceName);
     await LocalStorage.storeLocalStorage('_device', device.toJson());
+  }
+
+  Future<void> syncAppData(String deviceCode) async {
+    final date = DateTime.now();
+    final startDate =
+        Helper.getDate(date.subtract(Duration(days: date.weekday - 1)));
+
+    final appWeek = await AppWeekRepositoryImpl().addAppWeek(
+        startDate: startDate, endDate: date, deviceCode: deviceCode);
+
+    print(appWeek);
   }
 }
