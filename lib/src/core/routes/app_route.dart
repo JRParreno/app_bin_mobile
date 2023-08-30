@@ -10,6 +10,7 @@ import 'package:app_bin_mobile/src/features/block/presentation/screen/add_usage_
 import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/prompt_block_screen.dart';
+import 'package:app_bin_mobile/src/features/device/add_device/presentation/screen/add_device_screen.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/presentation/screen/view_device_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
@@ -53,6 +54,8 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
             return const UpdateProfilePcitureScreen();
           case AddBlockAppScreen.routeName:
             return const AddBlockAppScreen();
+          case AddDeviceScreen.routeName:
+            return const AddDeviceScreen();
         }
         return const Scaffold(
           resizeToAvoidBottomInset: false,

@@ -32,7 +32,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final signupFormKey = GlobalKey<FormState>();
   bool _passwordVisible = true;
   bool _confirmPasswordVisible = true;
-  bool _isCheck = false;
+  bool _isCheck = true;
+  bool _isParentUser = true;
+
+  @override
+  void initState() {
+    handleTest();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -42,6 +49,80 @@ class _SignUpScreenState extends State<SignUpScreen> {
     firstNameCtrl.dispose();
     lastNameCtrl.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: buildAppBar(context: context, title: "Signup"),
+      body: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.all(10),
+        height: double.infinity,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            width: double.infinity,
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.9,
+            ),
+            decoration: BoxDecoration(
+              color: ColorName.gray,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(10),
+              ),
+              border: Border.all(
+                  width: 1.0, style: BorderStyle.solid, color: ColorName.gray),
+            ),
+            child: SignupForm(
+              emailCtrl: emailCtrl,
+              passwordCtrl: passwordCtrl,
+              confirmPasswordCtrl: confirmPasswordCtrl,
+              firstNameCtrl: firstNameCtrl,
+              lastNameCtrl: lastNameCtrl,
+              signupFormKey: signupFormKey,
+              passwordVisible: _passwordVisible,
+              confirmPasswordVisible: _confirmPasswordVisible,
+              isParentUser: _isParentUser,
+              suffixIconPassword: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
+                child: Icon(!_passwordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off),
+              ),
+              suffixIconConfirmPassword: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _confirmPasswordVisible = !_confirmPasswordVisible;
+                  });
+                },
+                child: Icon(!_confirmPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off),
+              ),
+              onChangeCheckBox: (value) {
+                setState(() {
+                  _isCheck = value;
+                });
+              },
+              onChangeCheckBoxParent: (value) {
+                setState(() {
+                  _isParentUser = value;
+                });
+              },
+              isCheck: _isCheck,
+              onSubmit: handleSignup,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void handleSignup() {
@@ -54,6 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           confirmPassword: confirmPasswordCtrl.text,
           firstName: firstNameCtrl.text,
           lastName: lastNameCtrl.text,
+          isParent: _isParentUser,
         );
         SignupImpl().register(signup).then((value) async {
           await LocalStorage.storeLocalStorage(
@@ -109,71 +191,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: buildAppBar(context: context, title: "Signup"),
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(10),
-        height: double.infinity,
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            width: double.infinity,
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.9,
-            ),
-            decoration: BoxDecoration(
-              color: ColorName.gray,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(10),
-              ),
-              border: Border.all(
-                  width: 1.0, style: BorderStyle.solid, color: ColorName.gray),
-            ),
-            child: SignupForm(
-              emailCtrl: emailCtrl,
-              passwordCtrl: passwordCtrl,
-              confirmPasswordCtrl: confirmPasswordCtrl,
-              firstNameCtrl: firstNameCtrl,
-              lastNameCtrl: lastNameCtrl,
-              signupFormKey: signupFormKey,
-              passwordVisible: _passwordVisible,
-              confirmPasswordVisible: _confirmPasswordVisible,
-              suffixIconPassword: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _passwordVisible = !_passwordVisible;
-                  });
-                },
-                child: Icon(!_passwordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off),
-              ),
-              suffixIconConfirmPassword: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _confirmPasswordVisible = !_confirmPasswordVisible;
-                  });
-                },
-                child: Icon(!_confirmPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off),
-              ),
-              onChangeCheckBox: (value) {
-                setState(() {
-                  _isCheck = value;
-                });
-              },
-              isCheck: _isCheck,
-              onSubmit: handleSignup,
-            ),
-          ),
-        ),
-      ),
-    );
+  void handleTest() {
+    emailCtrl.text = 'jhonrhayparreno22@gmail.com';
+    passwordCtrl.text = '2020Rtutest@';
+    confirmPasswordCtrl.text = '2020Rtutest@';
+    firstNameCtrl.text = 'jr';
+    lastNameCtrl.text = 'parreno';
   }
 }

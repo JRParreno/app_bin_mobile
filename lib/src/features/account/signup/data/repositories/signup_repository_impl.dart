@@ -16,6 +16,7 @@ class SignupImpl extends SignupRepository {
       "last_name": signup.lastName,
       "password": signup.password,
       "confirm_password": signup.confirmPassword,
+      "is_parent": signup.isParent,
     };
 
     return await dio.post(url, data: data).then((value) {

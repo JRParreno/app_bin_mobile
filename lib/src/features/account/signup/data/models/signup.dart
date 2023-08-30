@@ -7,12 +7,15 @@ class Signup {
   final String email;
   final String password;
   final String confirmPassword;
+  final bool isParent;
+
   Signup({
     required this.firstName,
     required this.lastName,
     required this.email,
     required this.password,
     required this.confirmPassword,
+    this.isParent = false,
   });
 
   Signup copyWith({
@@ -21,6 +24,7 @@ class Signup {
     String? email,
     String? password,
     String? confirmPassword,
+    bool? isParent,
   }) {
     return Signup(
       firstName: firstName ?? this.firstName,
@@ -28,6 +32,7 @@ class Signup {
       email: email ?? this.email,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
+      isParent: isParent ?? this.isParent,
     );
   }
 
@@ -38,6 +43,7 @@ class Signup {
       'email': email,
       'password': password,
       'confirmPassword': confirmPassword,
+      'isParent': isParent,
     };
   }
 
@@ -48,6 +54,7 @@ class Signup {
       email: map['email'] as String,
       password: map['password'] as String,
       confirmPassword: map['confirmPassword'] as String,
+      isParent: map['isParent'] as bool,
     );
   }
 
@@ -58,7 +65,7 @@ class Signup {
 
   @override
   String toString() {
-    return 'Signup(firstName: $firstName, lastName: $lastName, email: $email, password: $password, confirmPassword: $confirmPassword)';
+    return 'Signup(firstName: $firstName, lastName: $lastName, isParent: $isParent, email: $email, password: $password, confirmPassword: $confirmPassword)';
   }
 
   @override
@@ -69,6 +76,7 @@ class Signup {
         other.lastName == lastName &&
         other.email == email &&
         other.password == password &&
+        other.isParent == isParent &&
         other.confirmPassword == confirmPassword;
   }
 
@@ -78,6 +86,7 @@ class Signup {
         lastName.hashCode ^
         email.hashCode ^
         password.hashCode ^
+        isParent.hashCode ^
         confirmPassword.hashCode;
   }
 }

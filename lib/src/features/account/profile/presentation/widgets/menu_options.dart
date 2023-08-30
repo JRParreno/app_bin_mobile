@@ -57,20 +57,22 @@ class MenuOptions extends StatelessWidget {
               trailing: const Icon(Icons.chevron_right),
             ),
           ),
-          Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            child: ListTile(
-              title: const CustomText(text: "View Device(s)"),
-              leading: const Icon(Icons.device_hub),
-              onTap: () {
-                toNavigateScreen(
-                  screen: const ViewDeviceScreen(),
-                  context: context,
-                );
-              },
-              trailing: const Icon(Icons.chevron_right),
+          if (ProfileUtils.userProfile(context)!.isParent) ...[
+            Card(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: ListTile(
+                title: const CustomText(text: "View Device(s)"),
+                leading: const Icon(Icons.device_hub),
+                onTap: () {
+                  toNavigateScreen(
+                    screen: const ViewDeviceScreen(),
+                    context: context,
+                  );
+                },
+                trailing: const Icon(Icons.chevron_right),
+              ),
             ),
-          ),
+          ],
           Card(
             margin: const EdgeInsets.only(bottom: 10),
             child: ListTile(

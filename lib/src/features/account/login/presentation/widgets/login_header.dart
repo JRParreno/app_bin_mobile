@@ -7,41 +7,39 @@ class LoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      flex: 1,
-      child: SizedBox(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Assets.images.appbin
-                  .image(height: MediaQuery.of(context).size.height * 0.17),
-              const Divider(
-                color: Colors.transparent,
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomText(
-                    text: "Welcome to App Bin",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.35,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.images.appbin
+                .image(height: MediaQuery.of(context).size.height * 0.17),
+            const Divider(
+              color: Colors.transparent,
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomText(
+                  text: "Welcome to App Bin",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                ],
-              ),
-              const Divider(
-                color: Colors.transparent,
-              ),
-              const CustomText(
-                text: "Your Application Management Usage",
-                style: TextStyle(
-                  fontSize: 16,
                 ),
+              ],
+            ),
+            const Divider(
+              color: Colors.transparent,
+            ),
+            const CustomText(
+              text: "Your Application Management Usage",
+              style: TextStyle(
+                fontSize: 16,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

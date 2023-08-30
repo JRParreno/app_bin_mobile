@@ -9,6 +9,8 @@ class Profile {
   final String email;
   final String profilePk;
   final String? profilePhoto;
+  final bool isParent;
+
   Profile({
     required this.pk,
     required this.username,
@@ -17,17 +19,18 @@ class Profile {
     required this.email,
     required this.profilePk,
     this.profilePhoto,
+    this.isParent = false,
   });
 
-  Profile copyWith({
-    String? pk,
-    String? username,
-    String? firstName,
-    String? lastName,
-    String? email,
-    String? profilePk,
-    String? profilePhoto,
-  }) {
+  Profile copyWith(
+      {String? pk,
+      String? username,
+      String? firstName,
+      String? lastName,
+      String? email,
+      String? profilePk,
+      String? profilePhoto,
+      bool? isParent}) {
     return Profile(
       pk: pk ?? this.pk,
       username: username ?? this.username,
@@ -36,6 +39,7 @@ class Profile {
       email: email ?? this.email,
       profilePk: profilePk ?? this.profilePk,
       profilePhoto: profilePhoto ?? this.profilePhoto,
+      isParent: isParent ?? this.isParent,
     );
   }
 
@@ -48,6 +52,7 @@ class Profile {
       'email': email,
       'profilePk': profilePk,
       'profilePhoto': profilePhoto,
+      'isParent': isParent,
     };
   }
 
@@ -61,6 +66,7 @@ class Profile {
       profilePk: map['profilePk'] as String,
       profilePhoto:
           map['profilePhoto'] != null ? map['profilePhoto'] as String : null,
+      isParent: map['isParent'] as bool,
     );
   }
 
@@ -71,7 +77,7 @@ class Profile {
 
   @override
   String toString() {
-    return 'Profile(pk: $pk, username: $username, firstName: $firstName, lastName: $lastName, email: $email, profilePk: $profilePk, profilePhoto: $profilePhoto)';
+    return 'Profile(pk: $pk, username: $username, isParent: $isParent, firstName: $firstName, lastName: $lastName, email: $email, profilePk: $profilePk, profilePhoto: $profilePhoto)';
   }
 
   @override
@@ -83,6 +89,7 @@ class Profile {
         other.firstName == firstName &&
         other.lastName == lastName &&
         other.email == email &&
+        other.isParent == isParent &&
         other.profilePk == profilePk &&
         other.profilePhoto == profilePhoto;
   }
@@ -94,6 +101,7 @@ class Profile {
         firstName.hashCode ^
         lastName.hashCode ^
         email.hashCode ^
+        isParent.hashCode ^
         profilePk.hashCode ^
         profilePhoto.hashCode;
   }

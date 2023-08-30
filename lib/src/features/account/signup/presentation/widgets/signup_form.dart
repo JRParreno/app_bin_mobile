@@ -15,7 +15,10 @@ class SignupForm extends StatelessWidget {
   final Widget? suffixIconPassword;
   final Widget? suffixIconConfirmPassword;
   final bool isCheck;
+  final bool isParentUser;
   final Function(bool value) onChangeCheckBox;
+  final Function(bool value) onChangeCheckBoxParent;
+
   final VoidCallback onSubmit;
 
   const SignupForm({
@@ -30,9 +33,11 @@ class SignupForm extends StatelessWidget {
     required this.confirmPasswordVisible,
     required this.onChangeCheckBox,
     required this.onSubmit,
+    required this.onChangeCheckBoxParent,
     this.suffixIconPassword,
     this.suffixIconConfirmPassword,
     this.isCheck = false,
+    this.isParentUser = false,
   });
 
   @override
@@ -103,6 +108,23 @@ class SignupForm extends StatelessWidget {
               }
               return null;
             },
+          ),
+          const Divider(
+            color: Colors.transparent,
+          ),
+          Row(
+            children: [
+              Checkbox(
+                  value: isParentUser,
+                  onChanged: (value) {
+                    onChangeCheckBoxParent(value ?? false);
+                  }),
+              const Expanded(
+                child: CustomText(
+                  text: "Are you a parent user?",
+                ),
+              ),
+            ],
           ),
           const Divider(
             height: 40,
