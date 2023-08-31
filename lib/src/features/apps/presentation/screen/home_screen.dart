@@ -99,26 +99,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocProvider(
-          create: (context) => AppStatsBloc()
-            ..add(AppStatsCurrentUsage(
-              startTime: DateTime.now(),
-              endTime: DateTime.now(),
-            )),
-          child: SizedBox(
-            child: PersistentBottomNavigation(
-              buildScreens: _buildScreens,
-              controller: _controller,
-              navBarsItems: _navBarsItems(),
-            ),
-          ),
+        child: BlocBuilder<AppStatsBloc, AppStatsState>(
+          builder: (context, state) {
+            return SizedBox(
+              child: PersistentBottomNavigation(
+                buildScreens: _buildScreens,
+                controller: _controller,
+                navBarsItems: _navBarsItems(),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
   Future<void> getDeviceInfo() async {
-    EasyLoading.showSuccess("Please wait..");
+    EasyLoading.show(status: 'Synching please wait');
     final currentDeviceInfo = await LocalStorage.readLocalStorage('_device');
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -138,10 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     await syncAppData(deviceCode);
-
-    await Future.delayed(const Duration(seconds: 1), () {
-      EasyLoading.dismiss();
-    });
   }
 
   Future<void> registerDeviceInfo({
@@ -158,9 +151,32 @@ class _HomeScreenState extends State<HomeScreen> {
     final startDate =
         Helper.getDate(date.subtract(Duration(days: date.weekday - 1)));
 
-    final appWeek = await AppWeekRepositoryImpl().addAppWeek(
-        startDate: startDate, endDate: date, deviceCode: deviceCode);
+    try {
+      await AppWeekRepositoryImpl().addAppWeek(
+          startDate: startDate, endDate: date, deviceCode: deviceCode);
+    } catch (e) {
+      print(e.toString());
+    }
 
-    print(appWeek);
+    final appWeek = await AppWeekRepositoryImpl().fetchAppWeek(
+        startDate: startDate, endDate: date, deviceCode: deviceCode);
+    if (appWeek != null) {
+      final appStats = await Helper.getAppUsage();
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<AppStatsBloc>(context)
+          .add(AppStatsInitialUsage(appStats));
+
+      for (var appStat in appStats) {
+        for (var element in appStat) {
+          await AppWeekRepositoryImpl()
+              .addAppData(element.copyWith(appServiceId: appWeek.pk));
+        }
+      }
+    }
+    EasyLoading.showSuccess("Done synching");
+
+    await Future.delayed(const Duration(seconds: 1), () {
+      EasyLoading.dismiss();
+    });
   }
 }

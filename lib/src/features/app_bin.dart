@@ -8,6 +8,7 @@ import 'package:app_bin_mobile/src/features/account/profile/data/repositories/pr
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -77,6 +78,7 @@ class _AppBinState extends State<AppBin> {
       providers: [
         BlocProvider(create: (ctx) => ProfileBloc()),
         BlocProvider(create: (ctx) => AppsBloc()),
+        BlocProvider(create: (ctx) => AppStatsBloc()),
       ],
       child: ScreenUtilInit(
         useInheritedMediaQuery: true,

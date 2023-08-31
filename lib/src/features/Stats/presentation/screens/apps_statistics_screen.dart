@@ -29,7 +29,6 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
 
   @override
   void initState() {
-    getCurrentUsageInfo();
     getCurrentApps();
     super.initState();
   }
@@ -47,33 +46,21 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
     });
   }
 
-  void getCurrentUsageInfo() async {
-    final temp = await Helper.getCurrentDuration();
-    setState(() {
-      duration = temp;
-    });
-  }
-
-  void test() {
-    getCurrentUsageInfo();
-    BlocProvider.of<AppStatsBloc>(context).add(const AppStatsCurrentUsage());
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const CustomText(text: "Statistics"),
       ),
-      body: SingleChildScrollView(
-        child: BlocBuilder<AppStatsBloc, AppStatsState>(
-          builder: (context, state) {
-            if (state is InitialState) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is AppStatsLoaded) {
-              final chartData = Helper.getAppUsageChartData(state);
+      body: BlocBuilder<AppStatsBloc, AppStatsState>(
+        builder: (context, state) {
+          if (state is InitialState) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is AppStatsLoaded) {
+            final chartData = Helper.getAppUsageChartData(state);
 
-              return Column(
+            return SingleChildScrollView(
+              child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10.0),
@@ -93,7 +80,7 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                   ),
                   CustomText(
                     text:
-                        '${duration.inHours}hrs ${duration.inMinutes > 60 ? (duration.inMinutes / 60).round() : duration.inMinutes}mins today',
+                        '${state.duration.inHours}hrs ${state.duration.inMinutes.remainder(60)}mins today',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -140,12 +127,12 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                     currentApps: myApps,
                   ),
                 ],
-              );
-            }
+              ),
+            );
+          }
 
-            return const SizedBox();
-          },
-        ),
+          return const SizedBox();
+        },
       ),
     );
   }

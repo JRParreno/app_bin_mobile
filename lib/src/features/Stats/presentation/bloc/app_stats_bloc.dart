@@ -10,6 +10,7 @@ part 'app_stats_state.dart';
 class AppStatsBloc extends Bloc<AppStatsEvent, AppStatsState> {
   AppStatsBloc() : super(const InitialState()) {
     on<AppStatsCurrentUsage>(_appStatsCurrentUsage);
+    on<AppStatsInitialUsage>(_appStatsInitialUsage);
   }
 
   void _appStatsCurrentUsage(
@@ -20,6 +21,27 @@ class AppStatsBloc extends Bloc<AppStatsEvent, AppStatsState> {
       startTime: event.startTime,
       endTime: event.endTime,
     );
-    return emit(AppStatsLoaded(appUsage: usageInfos));
+    final duration = await Helper.getCurrentDuration(
+      appBinstats: usageInfos,
+    );
+
+    return emit(AppStatsLoaded(
+      appUsage: usageInfos,
+      duration: duration,
+    ));
+  }
+
+  void _appStatsInitialUsage(
+    AppStatsInitialUsage event,
+    Emitter<AppStatsState> emit,
+  ) async {
+    final duration =
+        await Helper.getCurrentDuration(appBinstats: event.appBinStats);
+    return emit(
+      AppStatsLoaded(
+        appUsage: event.appBinStats,
+        duration: duration,
+      ),
+    );
   }
 }

@@ -35,9 +35,9 @@ class AppWeek {
 
   factory AppWeek.fromMap(Map<String, dynamic> map) {
     return AppWeek(
-      pk: map['pk'] ?? '',
-      startDate: DateTime.fromMillisecondsSinceEpoch(map['start_date']),
-      endDate: DateTime.fromMillisecondsSinceEpoch(map['end_date']),
+      pk: map['pk'].toString(),
+      startDate: DateTime.parse(map['start_date']),
+      endDate: DateTime.parse(map['end_date']),
     );
   }
 

@@ -50,9 +50,11 @@ class Helper {
     return tempAppUsage.first;
   }
 
-  static Future<Duration> getCurrentDuration() async {
+  static Future<Duration> getCurrentDuration({
+    List<List<AppBinStats>>? appBinstats,
+  }) async {
     Duration duration = const Duration();
-    final appUsages = await Helper.getAppUsage();
+    final appUsages = appBinstats ?? await Helper.getAppUsage();
     if (appUsages.isNotEmpty && appUsages.last.isNotEmpty) {
       final tempLast = appUsages.last;
       for (var i = 0; i < tempLast.length; i++) {

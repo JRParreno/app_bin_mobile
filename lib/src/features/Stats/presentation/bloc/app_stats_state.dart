@@ -11,11 +11,13 @@ abstract class AppStatsState extends Equatable {
 
 class AppStatsLoaded extends AppStatsState {
   final List<List<AppBinStats>> appUsage;
+  final Duration duration;
   final DateTime? start;
   final DateTime? end;
 
   const AppStatsLoaded({
     required this.appUsage,
+    required this.duration,
     this.start,
     this.end,
   });
@@ -25,5 +27,6 @@ class AppStatsLoaded extends AppStatsState {
         start,
         end,
         appUsage,
+        duration,
       ];
 }

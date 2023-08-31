@@ -74,8 +74,11 @@ class ListAppDuration extends StatelessWidget {
                         ),
                       ),
                     ),
-                    CustomText(
-                      text: time(item),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: CustomText(
+                        text: time(item),
+                      ),
                     )
                   ],
                 ),
