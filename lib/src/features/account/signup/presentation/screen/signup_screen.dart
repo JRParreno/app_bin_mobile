@@ -32,12 +32,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final signupFormKey = GlobalKey<FormState>();
   bool _passwordVisible = true;
   bool _confirmPasswordVisible = true;
-  bool _isCheck = true;
-  bool _isParentUser = true;
+  bool _isCheck = false;
+  bool _isParentUser = false;
 
   @override
   void initState() {
-    handleTest();
+    // handleTest();
     super.initState();
   }
 

@@ -121,7 +121,7 @@ class SignupForm extends StatelessWidget {
                   }),
               const Expanded(
                 child: CustomText(
-                  text: "Are you a parent user?",
+                  text: "Are you a parent?",
                 ),
               ),
             ],
