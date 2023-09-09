@@ -8,6 +8,7 @@ import 'package:app_bin_mobile/src/features/account/profile/data/repositories/pr
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:usage_stats/usage_stats.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/login-screen";
@@ -23,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordCtrl = TextEditingController();
   final loginFormKey = GlobalKey<FormState>();
   bool _passwordVisible = true;
+  bool isAppUsageEnable = false;
 
   @override
   void dispose() {
@@ -33,61 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    handleAppUsagePermission();
     super.initState();
-  }
-
-  void handleLogin() {
-    if (loginFormKey.currentState!.validate()) {
-      LoaderDialog.show(context: context);
-
-      LoginRepositoryImpl()
-          .login(email: emailCtrl.value.text, password: passwordCtrl.value.text)
-          .then((value) async {
-        await LocalStorage.storeLocalStorage(
-            '_token', value['data']['access_token']);
-        await LocalStorage.storeLocalStorage(
-            '_refreshToken', value['data']['refresh_token']);
-        handleGetProfile();
-      }).catchError((onError) {
-        LoaderDialog.hide(context: context);
-        Future.delayed(const Duration(milliseconds: 500), () {
-          CommonDialog.showMyDialog(
-            context: context,
-            title: "FireGuard",
-            body: "Invalid email or password",
-            isError: true,
-          );
-        });
-      });
-    }
-  }
-
-  void handleGetProfile() async {
-    await ProfileRepositoryImpl().fetchProfile().then((profile) async {
-      await LocalStorage.storeLocalStorage('_user', profile.toJson());
-      handleSetProfileBloc(profile);
-      Future.delayed(const Duration(milliseconds: 500), () {
-        Navigator.of(context).pushNamed(
-          HomeScreen.routeName,
-        );
-      });
-    }).catchError((onError) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        CommonDialog.showMyDialog(
-          context: context,
-          body: onError['data']['error_message'],
-          isError: true,
-        );
-      });
-    });
-    // ignore: use_build_context_synchronously
-    LoaderDialog.hide(context: context);
-  }
-
-  void handleSetProfileBloc(Profile profile) {
-    BlocProvider.of<ProfileBloc>(context).add(
-      SetProfileEvent(profile: profile),
-    );
   }
 
   @override
@@ -117,6 +66,95 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Future<void> handleAppUsagePermission() async {
+    try {
+      final permission = await UsageStats.checkUsagePermission() ?? false;
+
+      setState(() {
+        isAppUsageEnable = permission;
+      });
+
+      if (!permission) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          CommonDialog.showMyDialog(
+              context: context,
+              body: 'You need to enable app usage in app settings',
+              isError: true,
+              buttons: [
+                TextButton(
+                  child: const Text("Ok"),
+                  onPressed: () async {
+                    UsageStats.grantUsagePermission();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ]);
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void handleLogin() {
+    if (isAppUsageEnable) {
+      if (loginFormKey.currentState!.validate()) {
+        LoaderDialog.show(context: context);
+
+        LoginRepositoryImpl()
+            .login(
+                email: emailCtrl.value.text, password: passwordCtrl.value.text)
+            .then((value) async {
+          await LocalStorage.storeLocalStorage(
+              '_token', value['data']['access_token']);
+          await LocalStorage.storeLocalStorage(
+              '_refreshToken', value['data']['refresh_token']);
+          handleGetProfile();
+        }).catchError((onError) {
+          LoaderDialog.hide(context: context);
+          Future.delayed(const Duration(milliseconds: 500), () {
+            CommonDialog.showMyDialog(
+              context: context,
+              title: "FireGuard",
+              body: "Invalid email or password",
+              isError: true,
+            );
+          });
+        });
+      }
+    } else {
+      handleAppUsagePermission();
+    }
+  }
+
+  void handleGetProfile() async {
+    await ProfileRepositoryImpl().fetchProfile().then((profile) async {
+      await LocalStorage.storeLocalStorage('_user', profile.toJson());
+      handleSetProfileBloc(profile);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.of(context).pushNamed(
+          HomeScreen.routeName,
+        );
+      });
+    }).catchError((onError) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        CommonDialog.showMyDialog(
+          context: context,
+          body: onError['data']['error_message'],
+          isError: true,
+        );
+      });
+    });
+    // ignore: use_build_context_synchronously
+    LoaderDialog.hide(context: context);
+  }
+
+  void handleSetProfileBloc(Profile profile) {
+    BlocProvider.of<ProfileBloc>(context).add(
+      SetProfileEvent(profile: profile),
     );
   }
 }
