@@ -22,6 +22,8 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
       AppsLoadInitEvent event, Emitter<AppsState> emit) async {
     final tempList = await DeviceApps.getInstalledApplications(
       includeAppIcons: true,
+      includeSystemApps: true,
+      onlyAppsWithLaunchIntent: true,
     );
     final state = this.state;
 

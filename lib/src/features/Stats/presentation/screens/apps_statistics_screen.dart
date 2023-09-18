@@ -1,15 +1,18 @@
-import 'package:app_bin_mobile/gen/colors.gen.dart';
-import 'package:app_bin_mobile/src/core/bloc/common/common_state.dart';
-import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
-import 'package:app_bin_mobile/src/core/utils/help.dart';
-import 'package:app_bin_mobile/src/features/stats/models/chart_data.dart';
-import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
-import 'package:app_bin_mobile/src/features/stats/presentation/widgets/list_app_duration.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_filter_screen.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+import 'package:app_bin_mobile/gen/colors.gen.dart';
+import 'package:app_bin_mobile/src/core/bloc/common/common_state.dart';
+import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
+import 'package:app_bin_mobile/src/core/utils/help.dart';
+import 'package:app_bin_mobile/src/features/stats/data/models/chart_data.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/widgets/list_app_duration.dart';
 
 class AppsStatisticsScreen extends StatefulWidget {
   static const String routeName = "/apps-statistics-screen";
@@ -51,6 +54,15 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const CustomText(text: "Statistics"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                toNavigateScreen(
+                    context: context,
+                    screen: const AppStatisticsFilterScreen());
+              },
+              icon: const Icon(Icons.menu))
+        ],
       ),
       body: BlocBuilder<AppStatsBloc, AppStatsState>(
         builder: (context, state) {
@@ -58,6 +70,9 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is AppStatsLoaded) {
             final chartData = Helper.getAppUsageChartData(state);
+
+            // String formattedDate =
+            //     DateFormat('MM-dd-yyyy').format(DateTime.now());
 
             return SingleChildScrollView(
               child: Column(
@@ -135,5 +150,15 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
         },
       ),
     );
+  }
+
+  void toNavigateScreen(
+      {required BuildContext context, required Widget screen}) {
+    PersistentNavBarNavigator.pushNewScreen(
+      context,
+      screen: screen,
+      withNavBar: true, // OPTIONAL VALUE. True by default.
+      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+    ).whenComplete(() {});
   }
 }

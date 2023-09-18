@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart'; // You have to add this manually, for some reason it cannot be added automatically
 
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_stats.dart';
-import 'package:app_bin_mobile/src/features/stats/models/chart_data.dart';
+import 'package:app_bin_mobile/src/features/stats/data/models/chart_data.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';

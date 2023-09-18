@@ -52,31 +52,25 @@ class _AppsScreenState extends State<AppsScreen> {
       body: BlocBuilder<AppsBloc, AppsState>(
         builder: (context, state) {
           if (state is AppsLoaded) {
-            final filterApps =
-                state.applications.where((element) => element.isBlock).toList();
+            // final filterApps =
+            //     state.applications.where((element) => element.isBlock).toList();
 
-            if (filterApps.isNotEmpty) {
-              return Column(
-                children: [
-                  AppInstalledList(
-                    apps: filterApps,
-                    schedule: state.schedule,
-                  ),
-                ],
+            if (state.applications.isNotEmpty) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    AppInstalledList(
+                      apps: state.applications,
+                      schedule: state.schedule,
+                    ),
+                  ],
+                ),
               );
             }
             return SizedBox(
-                child: Column(
-              children: [
-                SizedBox(
-                    child:
-                        Assets.json.branndsjetApplicationDevelopment.lottie()),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-                  child: CustomText(text: "No apps block, please tap blocking"),
-                )
-              ],
-            ));
+              child: SizedBox(
+                  child: Assets.json.branndsjetApplicationDevelopment.lottie()),
+            );
           }
           return Container();
         },
