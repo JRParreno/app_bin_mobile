@@ -51,14 +51,13 @@ class Helper {
   }
 
   static Future<Duration> getCurrentDuration({
-    List<List<AppBinStats>>? appBinstats,
+    List<AppBinStats>? appBinstats,
   }) async {
     Duration duration = const Duration();
-    final appUsages = appBinstats ?? await Helper.getAppUsage();
-    if (appUsages.isNotEmpty && appUsages.last.isNotEmpty) {
-      final tempLast = appUsages.last;
-      for (var i = 0; i < tempLast.length; i++) {
-        final element = tempLast[i];
+    final appUsages = appBinstats ?? await Helper.getDailyAppUsage();
+    if (appUsages.isNotEmpty) {
+      for (var i = 0; i < appUsages.length; i++) {
+        final element = appUsages[i];
         duration += Duration(hours: element.hours, minutes: element.minutes);
       }
     }
@@ -80,16 +79,16 @@ class Helper {
     required List<AppUsageInfo> usages,
     required List<Application> apps,
   }) {
-    List<Application> appList = [];
+    List<AppUsageInfo> filterAppUsages = [];
 
-    appList = filterApps(apps);
-
-    return usages.where((e) {
-      final checkAppExists = appList.where((element) {
+    filterAppUsages = usages.where((e) {
+      final checkAppExists = apps.where((element) {
         return element.packageName == e.packageName;
       }).toList();
       return checkAppExists.isNotEmpty;
     }).toList();
+
+    return filterAppUsages;
   }
 
   static FutureOr<List<List<AppBinStats>>> getAppUsage({
@@ -105,18 +104,15 @@ class Helper {
         : getDate(date.subtract(Duration(days: date.weekday - 1)));
 
     final weeksRange = getWeeksForRange(start: startDate, end: date);
-    final tempList = await DeviceApps.getInstalledApplications(
-      includeAppIcons: true,
-      includeSystemApps: false,
-    );
+    final tempList = await getListOfApps();
 
     for (var i = 0; i < weeksRange.first.length; i++) {
       final element = weeksRange.first[i];
-      final startDateRange =
-          DateTime(element.year, element.month, element.day, 0);
+      final startDateRange = DateTime(element.year, element.month, element.day);
       final endDateRange = date.day == element.day
           ? date
           : DateTime(element.year, element.month, element.day, 23, 59);
+
       final tempAppUsageInfoList =
           await AppUsage().getAppUsage(startDateRange, endDateRange);
       final appUsageInfoList =
@@ -229,14 +225,7 @@ class Helper {
       List<AppUsageInfo> appUsageInfos) async {
     final List<AppBinStats> tempAppBinStats = [];
 
-    final tempList =
-        await DeviceApps.getInstalledApplications(includeAppIcons: true);
-    tempList
-        .where((element) =>
-            element.category == ApplicationCategory.game ||
-            element.category == ApplicationCategory.social ||
-            element.category == ApplicationCategory.productivity)
-        .toList();
+    final tempList = await getListOfApps();
 
     for (var i = 0; i < appUsageInfos.length; i++) {
       final appUsageInfo = appUsageInfos[i];
@@ -252,5 +241,53 @@ class Helper {
     }
 
     return tempAppBinStats;
+  }
+
+  static Future<List<Application>> getListOfApps() async {
+    final tempList = await DeviceApps.getInstalledApplications(
+      includeAppIcons: true,
+    );
+
+    final tempSystemApps = await DeviceApps.getInstalledApplications(
+      includeAppIcons: true,
+      includeSystemApps: true,
+      onlyAppsWithLaunchIntent: true,
+    );
+
+    final systemApps = tempSystemApps
+        .where((element) =>
+            element.packageName == 'com.android.chrome' ||
+            element.packageName.contains('com.google.android'))
+        .toList();
+
+    final appList = tempList
+        .where((element) =>
+            element.category == ApplicationCategory.game ||
+            element.category == ApplicationCategory.social ||
+            element.category == ApplicationCategory.productivity ||
+            element.category == ApplicationCategory.video)
+        .toList();
+
+    final result = [...appList, ...systemApps];
+
+    return result.toSet().toList();
+  }
+
+  static FutureOr<List<AppBinStats>> getDailyAppUsage() async {
+    final endDate = DateTime.now();
+    final startDate = DateTime(endDate.year, endDate.month, endDate.day);
+
+    final tempList = await getListOfApps();
+
+    final tempAppUsageInfoList =
+        await AppUsage().getAppUsage(startDate, endDate);
+    final sortHighUsage = tempAppUsageInfoList
+      ..sort((a, b) => b.usage.compareTo(a.usage));
+    final appUsageInfoList =
+        filterAppUsageInfo(usages: sortHighUsage, apps: tempList);
+
+    final appBinStatsList = await convertToListAppBinStats(appUsageInfoList);
+
+    return appBinStatsList;
   }
 }

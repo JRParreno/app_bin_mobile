@@ -14,7 +14,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:flutter/material.dart';
-import 'package:device_apps/device_apps.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = "/home-screen";
@@ -26,31 +25,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Application> myApps = [];
   int currentTab = 0;
 
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
-
-  Future<List<Application>> getListOfApps() async {
-    final tempList =
-        await DeviceApps.getInstalledApplications(includeAppIcons: true);
-    setState(() {
-      myApps = tempList
-          .where((element) =>
-              element.category == ApplicationCategory.game ||
-              element.category == ApplicationCategory.social ||
-              element.category == ApplicationCategory.productivity)
-          .toList();
-    });
-
-    return tempList
-        .where((element) =>
-            element.category == ApplicationCategory.game ||
-            element.category == ApplicationCategory.social ||
-            element.category == ApplicationCategory.productivity)
-        .toList();
-  }
 
   final _buildScreens = [
     const AppsScreen(),
@@ -90,7 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    getListOfApps();
     WidgetsBinding.instance.addPostFrameCallback((_) => getDeviceInfo());
     super.initState();
   }
@@ -161,12 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final appWeek = await AppWeekRepositoryImpl().fetchAppWeek(
         startDate: startDate, endDate: date, deviceCode: deviceCode);
     if (appWeek != null) {
-      final appStats = await Helper.getAppUsage();
+      final appStats = await Helper.getDailyAppUsage();
+      final apps = await Helper.getListOfApps();
       // ignore: use_build_context_synchronously
-      BlocProvider.of<AppStatsBloc>(context)
-          .add(AppStatsInitialUsage(appStats));
+      BlocProvider.of<AppStatsBloc>(context).add(AppStatsInitialUsage(
+        appBinStats: [appStats],
+        apps: apps,
+      ));
 
-      for (var appStat in appStats) {
+      for (var appStat in [appStats]) {
         for (var element in appStat) {
           await AppWeekRepositoryImpl()
               .addAppData(element.copyWith(appServiceId: appWeek.pk));

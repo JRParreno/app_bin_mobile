@@ -20,47 +20,39 @@ class AppsBloc extends Bloc<AppsEvent, AppsState> {
 
   void _appsLoadInitEvent(
       AppsLoadInitEvent event, Emitter<AppsState> emit) async {
-    final tempList = await DeviceApps.getInstalledApplications(
-      includeAppIcons: true,
-      includeSystemApps: true,
-      onlyAppsWithLaunchIntent: true,
-    );
+    final tempList = await Helper.getListOfApps();
     final state = this.state;
 
-    final sortTempList = Helper.filterApps(
-      tempList
-        ..sort(
-          (a, b) {
-            return a.appName.toLowerCase().compareTo(b.appName.toLowerCase());
-          },
-        ),
+    final sortTempList = tempList
+      ..sort(
+        (a, b) {
+          return a.appName.toLowerCase().compareTo(b.appName.toLowerCase());
+        },
+      );
+
+    final tempAppBinsApps = convertAppToAppBinsApps(
+      appBinApps: [],
+      applications: sortTempList,
     );
 
-    if (event.whiteList.isNotEmpty) {
-      final tempAppBinsApps = convertAppToAppBinsApps(
-        appBinApps: [],
-        applications: sortTempList,
-      );
+    final appBinApps = tempAppBinsApps.map(
+      (e) {
+        final appExists = event.whiteList
+            .where((element) => e.application.packageName == element)
+            .toList();
+        return AppBinApps(
+          application: e.application,
+          isBlock: appExists.isNotEmpty,
+        );
+      },
+    ).toList();
 
-      final appBinApps = tempAppBinsApps.map(
-        (e) {
-          final appExists = event.whiteList
-              .where((element) => e.application.packageName == element)
-              .toList();
-          return AppBinApps(
-            application: e.application,
-            isBlock: appExists.isNotEmpty,
-          );
-        },
-      ).toList();
-
-      return emit(
-        AppsLoaded(
-          applications: appBinApps,
-          schedule: state is AppsLoaded ? state.schedule : null,
-        ),
-      );
-    }
+    return emit(
+      AppsLoaded(
+        applications: appBinApps,
+        schedule: state is AppsLoaded ? state.schedule : null,
+      ),
+    );
   }
 
   void _appsSearchEvent(AppsSearchEvent event, Emitter<AppsState> emit) {

@@ -3,7 +3,6 @@ import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/widget/usage_limit/usage_limit.dart';
-import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,9 +22,7 @@ class _BlockScreenState extends State<BlockScreen> {
   }
 
   void getApps() async {
-    final tempList = await DeviceApps.getInstalledApplications(
-      includeAppIcons: true,
-    );
+    final tempList = await Helper.getListOfApps();
 
     Future.delayed(const Duration(seconds: 2), () {
       BlocProvider.of<AppsBloc>(context).add(

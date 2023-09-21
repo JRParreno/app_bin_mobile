@@ -1,4 +1,3 @@
-import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_filter_screen.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
@@ -28,25 +27,10 @@ class AppsStatisticsScreen extends StatefulWidget {
 class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
   List<AppUsageInfo> currentUsageInfo = [];
   Duration duration = const Duration();
-  List<Application> myApps = [];
 
   @override
   void initState() {
-    getCurrentApps();
     super.initState();
-  }
-
-  Future<void> getCurrentApps() async {
-    final tempList =
-        await DeviceApps.getInstalledApplications(includeAppIcons: true);
-    setState(() {
-      myApps = tempList
-          .where((element) =>
-              element.category == ApplicationCategory.game ||
-              element.category == ApplicationCategory.social ||
-              element.category == ApplicationCategory.productivity)
-          .toList();
-    });
   }
 
   @override
@@ -57,9 +41,10 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                toNavigateScreen(
-                    context: context,
-                    screen: const AppStatisticsFilterScreen());
+                testBloc();
+                // toNavigateScreen(
+                //     context: context,
+                //     screen: const AppStatisticsFilterScreen());
               },
               icon: const Icon(Icons.menu))
         ],
@@ -111,9 +96,13 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                       primaryXAxis: CategoryAxis(
                         majorGridLines: const MajorGridLines(width: 0),
                       ),
+                      // Enable tooltip
+                      tooltipBehavior: TooltipBehavior(enable: true),
                       primaryYAxis: NumericAxis(
                           axisLine: const AxisLine(width: 0),
-                          labelFormat: '{value}',
+                          labelFormat: '{value} hr(s)',
+                          interval: 6,
+                          maximum: 24,
                           majorTickLines: const MajorTickLines(size: 0)),
                       series: <ColumnSeries<AppUsageChartData, String>>[
                         ColumnSeries<AppUsageChartData, String>(
@@ -139,7 +128,7 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                   ),
                   ListAppDuration(
                     apps: state.appUsage.last,
-                    currentApps: myApps,
+                    currentApps: state.apps,
                   ),
                 ],
               ),
@@ -160,5 +149,15 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
       withNavBar: true, // OPTIONAL VALUE. True by default.
       pageTransitionAnimation: PageTransitionAnimation.cupertino,
     ).whenComplete(() {});
+  }
+
+  Future<void> testBloc() async {
+    final appStats = await Helper.getDailyAppUsage();
+    final apps = await Helper.getListOfApps();
+    // ignore: use_build_context_synchronously
+    BlocProvider.of<AppStatsBloc>(context).add(AppStatsInitialUsage(
+      appBinStats: [appStats],
+      apps: apps,
+    ));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:app_bin_mobile/src/core/bloc/common/common_state.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_stats.dart';
+import 'package:device_apps/device_apps.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,17 +18,16 @@ class AppStatsBloc extends Bloc<AppStatsEvent, AppStatsState> {
     AppStatsCurrentUsage event,
     Emitter<AppStatsState> emit,
   ) async {
-    final usageInfos = await Helper.getAppUsage(
-      startTime: event.startTime,
-      endTime: event.endTime,
-    );
+    final usageInfos = await Helper.getDailyAppUsage();
+    final apps = await Helper.getListOfApps();
     final duration = await Helper.getCurrentDuration(
       appBinstats: usageInfos,
     );
 
     return emit(AppStatsLoaded(
-      appUsage: usageInfos,
+      appUsage: [usageInfos],
       duration: duration,
+      apps: apps,
     ));
   }
 
@@ -36,11 +36,12 @@ class AppStatsBloc extends Bloc<AppStatsEvent, AppStatsState> {
     Emitter<AppStatsState> emit,
   ) async {
     final duration =
-        await Helper.getCurrentDuration(appBinstats: event.appBinStats);
+        await Helper.getCurrentDuration(appBinstats: event.appBinStats.last);
     return emit(
       AppStatsLoaded(
         appUsage: event.appBinStats,
         duration: duration,
+        apps: event.apps,
       ),
     );
   }

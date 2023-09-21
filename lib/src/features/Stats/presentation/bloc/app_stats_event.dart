@@ -25,11 +25,16 @@ class AppStatsCurrentUsage extends AppStatsEvent {
 
 class AppStatsInitialUsage extends AppStatsEvent {
   final List<List<AppBinStats>> appBinStats;
+  final List<Application> apps;
 
-  const AppStatsInitialUsage(this.appBinStats);
+  const AppStatsInitialUsage({
+    required this.appBinStats,
+    required this.apps,
+  });
 
   @override
   List<Object?> get props => [
         appBinStats,
+        apps,
       ];
 }

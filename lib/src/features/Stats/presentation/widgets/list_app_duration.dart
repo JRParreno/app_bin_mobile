@@ -38,10 +38,10 @@ class ListAppDuration extends StatelessWidget {
           final tempApp = currentApps
               .where(
                 (element) =>
-                    element.packageName == item.packageName && item.minutes > 0,
+                    element.packageName == item.packageName &&
+                    (item.minutes > 0 || item.hours > 0),
               )
               .toList();
-
           if (tempApp.isNotEmpty) {
             final app = tempApp.first as ApplicationWithIcon;
             return Column(
