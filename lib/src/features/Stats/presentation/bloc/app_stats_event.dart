@@ -38,3 +38,19 @@ class AppStatsInitialUsage extends AppStatsEvent {
         apps,
       ];
 }
+
+class AppStatsFetchUsage extends AppStatsEvent {
+  final DateTime date;
+  final String deviceCode;
+
+  const AppStatsFetchUsage({
+    required this.date,
+    required this.deviceCode,
+  });
+
+  @override
+  List<Object?> get props => [
+        date,
+        deviceCode,
+      ];
+}

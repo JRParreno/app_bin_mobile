@@ -20,6 +20,10 @@ class LoadingState extends CommonState {
   const LoadingState();
 }
 
+class EmptyState extends CommonState {
+  const EmptyState();
+}
+
 class ErrorState extends CommonState {
   final String error;
   const ErrorState(this.error);

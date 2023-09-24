@@ -7,6 +7,7 @@ import 'package:app_bin_mobile/src/features/stats/data/models/chart_data.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
+import 'package:flutter/material.dart';
 // import 'package:device_apps/device_apps.dart';
 
 class Helper {
@@ -16,16 +17,30 @@ class Helper {
     return [];
   }
 
+  static DateTime findFirstDateOfTheWeek(DateTime dateTime) {
+    return dateTime.subtract(Duration(days: dateTime.weekday - 1));
+  }
+
+  static DateTime findLastDateOfTheWeek(DateTime dateTime) {
+    return dateTime
+        .add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
+  }
+
   static List<List<DateTime>> getWeeksForRange({
-    required DateTime start,
-    required DateTime end,
+    DateTime? start,
+    DateTime? end,
   }) {
+    final today = DateTime.now();
+
+    final endDate = end ?? findLastDateOfTheWeek(today);
+    final startDate = start ?? findFirstDateOfTheWeek(today);
+
     var result = <List<DateTime>>[];
 
-    var date = start;
+    var date = startDate;
     var week = <DateTime>[];
 
-    while (date.difference(end).inDays <= 0) {
+    while (date.difference(end ?? endDate).inDays <= 0) {
       // start new week on Monday
       if (date.weekday == 1 && week.isNotEmpty) {
         result.add(week);
@@ -101,7 +116,7 @@ class Helper {
     final date = startTime ?? DateTime.now();
     final startDate = endTime != null
         ? getDate(endTime.subtract(Duration(days: endTime.weekday - 1)))
-        : getDate(date.subtract(Duration(days: date.weekday - 1)));
+        : Helper.findFirstDateOfTheWeek(date);
 
     final weeksRange = getWeeksForRange(start: startDate, end: date);
     final tempList = await getListOfApps();
@@ -209,14 +224,15 @@ class Helper {
 
   static AppBinStats convertToAppBinStats(AppUsageInfo appUsageInfo) {
     final minutes = appUsageInfo.usage.inMinutes;
+    final startDate = appUsageInfo.startDate.add(const Duration(days: 1));
+
     return AppBinStats(
       id: '',
-      appServiceId: '',
       appName: appUsageInfo.appName,
       packageName: appUsageInfo.packageName,
       hours: appUsageInfo.usage.inHours,
       minutes: minutes > 60 ? (minutes / 60).round() : minutes,
-      startDate: appUsageInfo.startDate,
+      startDate: startDate,
       endDate: appUsageInfo.endDate,
     );
   }
@@ -273,11 +289,11 @@ class Helper {
     return result.toSet().toList();
   }
 
-  static FutureOr<List<AppBinStats>> getDailyAppUsage() async {
+  static FutureOr<List<AppBinStats>> getDailyAppUsage(
+      {List<Application>? apps}) async {
     final endDate = DateTime.now();
     final startDate = DateTime(endDate.year, endDate.month, endDate.day);
-
-    final tempList = await getListOfApps();
+    final tempList = apps ?? await getListOfApps();
 
     final tempAppUsageInfoList =
         await AppUsage().getAppUsage(startDate, endDate);
@@ -289,5 +305,33 @@ class Helper {
     final appBinStatsList = await convertToListAppBinStats(appUsageInfoList);
 
     return appBinStatsList;
+  }
+
+  static List<List<AppBinStats>> fetchAppDataToAppBinStats(
+      List<AppBinStats> stats) {
+    List<List<AppBinStats>> results = [];
+    List<AppBinStats> tempAppBinStats = [];
+
+    if (stats.isNotEmpty) {
+      for (int i = 0; i < stats.length; i++) {
+        final currentStat = stats[i];
+
+        if (i == (stats.length - 1)) {
+          tempAppBinStats.add(currentStat);
+          results.add(tempAppBinStats);
+        } else {
+          if (!DateUtils.isSameDay(
+              currentStat.startDate, stats[i + 1].startDate)) {
+            results.add(tempAppBinStats);
+            tempAppBinStats = [];
+          }
+          tempAppBinStats.add(currentStat);
+        }
+      }
+    } else {
+      results.add([]);
+    }
+
+    return results;
   }
 }

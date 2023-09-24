@@ -1,7 +1,9 @@
+import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_filter_screen.dart';
 import 'package:app_usage/app_usage.dart';
-import 'package:device_apps/device_apps.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -41,23 +43,28 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                testBloc();
-                // toNavigateScreen(
-                //     context: context,
-                //     screen: const AppStatisticsFilterScreen());
+                // testBloc();
+                toNavigateScreen(
+                    context: context,
+                    screen: const AppStatisticsFilterScreen());
               },
               icon: const Icon(Icons.menu))
         ],
       ),
       body: BlocBuilder<AppStatsBloc, AppStatsState>(
         builder: (context, state) {
-          if (state is InitialState) {
+          if (state is InitialState || state is LoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is AppStatsLoaded) {
             final chartData = Helper.getAppUsageChartData(state);
+            final firstDayWeek = DateFormat('MMM dd, yyyy')
+                .format(Helper.findFirstDateOfTheWeek(state.filterDate));
+            final endDayWeek = DateFormat('MMM dd, yyyy')
+                .format(Helper.findLastDateOfTheWeek(state.filterDate));
 
-            // String formattedDate =
-            //     DateFormat('MM-dd-yyyy').format(DateTime.now());
+            final durationTitle = state.duration.inHours > 0
+                ? '${state.duration.inHours}hrs ${state.duration.inMinutes.remainder(60)}mins'
+                : '${state.duration.inMinutes.remainder(60)}mins';
 
             return SingleChildScrollView(
               child: Column(
@@ -79,8 +86,15 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                     ),
                   ),
                   CustomText(
-                    text:
-                        '${state.duration.inHours}hrs ${state.duration.inMinutes.remainder(60)}mins today',
+                    text: '$firstDayWeek - $endDayWeek',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  CustomText(
+                    text: durationTitle,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -100,9 +114,10 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                       tooltipBehavior: TooltipBehavior(enable: true),
                       primaryYAxis: NumericAxis(
                           axisLine: const AxisLine(width: 0),
-                          labelFormat: '{value} hr(s)',
-                          interval: 6,
-                          maximum: 24,
+                          labelFormat: '{value} hrs',
+                          interval:
+                              getMaximumIntervalValue(state.duration.inHours),
+                          maximum: getMaximumValues(state.duration.inHours),
                           majorTickLines: const MajorTickLines(size: 0)),
                       series: <ColumnSeries<AppUsageChartData, String>>[
                         ColumnSeries<AppUsageChartData, String>(
@@ -114,7 +129,10 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                               final hours = sales.duration.inHours;
                               final minutes = sales.duration.inMinutes;
 
-                              return hours > 0 ? hours : minutes;
+                              return hours > 0
+                                  ? hours
+                                  : num.parse(
+                                      (minutes / 60).toStringAsFixed(2));
                             },
                             dataLabelSettings: const DataLabelSettings(
                               isVisible: true,
@@ -132,6 +150,10 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                   ),
                 ],
               ),
+            );
+          } else if (state is ErrorState) {
+            return const Center(
+              child: CustomText(text: 'Something went wrong'),
             );
           }
 
@@ -159,5 +181,37 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
       appBinStats: [appStats],
       apps: apps,
     ));
+  }
+
+  double getMaximumValues(int inHours) {
+    if (inHours < 1) {
+      return 0.5;
+    } else if (inHours < 2) {
+      return 3;
+    } else if (inHours < 5) {
+      return 5;
+    } else if (inHours < 8) {
+      return 10;
+    } else if (inHours < 10) {
+      return 15;
+    } else {
+      return 24;
+    }
+  }
+
+  double getMaximumIntervalValue(int inHours) {
+    if (inHours < 1) {
+      return 0.25;
+    } else if (inHours < 2) {
+      return 2;
+    } else if (inHours < 5) {
+      return 3;
+    } else if (inHours < 8) {
+      return 2;
+    } else if (inHours < 10) {
+      return 3;
+    } else {
+      return 4;
+    }
   }
 }

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class AppBinStats {
   final String id;
-  final String appServiceId;
   final String appName;
   final String packageName;
   final int hours;
@@ -15,7 +15,6 @@ class AppBinStats {
 
   AppBinStats({
     required this.id,
-    required this.appServiceId,
     required this.appName,
     required this.packageName,
     required this.hours,
@@ -27,7 +26,6 @@ class AppBinStats {
 
   AppBinStats copyWith({
     String? id,
-    String? appServiceId,
     String? appName,
     String? packageName,
     int? hours,
@@ -38,7 +36,6 @@ class AppBinStats {
   }) {
     return AppBinStats(
       id: id ?? this.id,
-      appServiceId: appServiceId ?? this.appServiceId,
       appName: appName ?? this.appName,
       packageName: packageName ?? this.packageName,
       hours: hours ?? this.hours,
@@ -53,7 +50,6 @@ class AppBinStats {
     final result = <String, dynamic>{};
 
     result.addAll({'id': id});
-    result.addAll({'appServiceId': appServiceId});
     result.addAll({'appName': appName});
     result.addAll({'packageName': packageName});
     result.addAll({'hours': hours});
@@ -67,13 +63,12 @@ class AppBinStats {
   factory AppBinStats.fromMap(Map<String, dynamic> map) {
     return AppBinStats(
       id: map['id'] ?? '',
-      appServiceId: map['appServiceId'] ?? '',
-      appName: map['appName'] ?? '',
-      packageName: map['packageName'] ?? '',
+      appName: map['app_name'] ?? '',
+      packageName: map['package_name'] ?? '',
       hours: map['hours']?.toInt() ?? 0,
       minutes: map['minutes']?.toInt() ?? 0,
-      startDate: DateTime.fromMillisecondsSinceEpoch(map['startDate']),
-      endDate: DateTime.fromMillisecondsSinceEpoch(map['endDate']),
+      startDate: DateFormat("yyyy-MM-dd").parse(map['start_date']),
+      endDate: DateFormat("yyyy-MM-dd").parse(map['end_date']),
       icon: null,
     );
   }
@@ -85,7 +80,7 @@ class AppBinStats {
 
   @override
   String toString() {
-    return 'AppBinStats(id: $id, appServiceId: $appServiceId, appName: $appName, packageName: $packageName, hours: $hours, minutes: $minutes, startDate: $startDate, endDate: $endDate, icon: $icon)';
+    return 'AppBinStats(id: $id, appName: $appName, packageName: $packageName, hours: $hours, minutes: $minutes, startDate: $startDate, endDate: $endDate, icon: $icon)';
   }
 
   @override
@@ -94,7 +89,6 @@ class AppBinStats {
 
     return other is AppBinStats &&
         other.id == id &&
-        other.appServiceId == appServiceId &&
         other.appName == appName &&
         other.packageName == packageName &&
         other.hours == hours &&
@@ -107,7 +101,6 @@ class AppBinStats {
   @override
   int get hashCode {
     return id.hashCode ^
-        appServiceId.hashCode ^
         appName.hashCode ^
         packageName.hashCode ^
         hours.hashCode ^

@@ -1,7 +1,7 @@
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
-import 'package:app_bin_mobile/src/features/apps/data/repository/app_week_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/apps/data/repository/app_data_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
@@ -124,35 +124,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> syncAppData(String deviceCode) async {
-    final date = DateTime.now();
-    final startDate =
-        Helper.getDate(date.subtract(Duration(days: date.weekday - 1)));
+    final apps = await Helper.getListOfApps();
 
-    try {
-      await AppWeekRepositoryImpl().addAppWeek(
-          startDate: startDate, endDate: date, deviceCode: deviceCode);
-    } catch (e) {
-      print(e.toString());
+    final dailyUsageApp = await Helper.getDailyAppUsage(apps: apps);
+    // await Helper.getAppUsage();
+
+    final today = DateTime.now();
+
+    for (var stats in dailyUsageApp) {
+      await AppWeekRepositoryImpl()
+          .addAppData(appBinStats: stats, deviceCode: deviceCode);
     }
 
-    final appWeek = await AppWeekRepositoryImpl().fetchAppWeek(
-        startDate: startDate, endDate: date, deviceCode: deviceCode);
-    if (appWeek != null) {
-      final appStats = await Helper.getDailyAppUsage();
-      final apps = await Helper.getListOfApps();
-      // ignore: use_build_context_synchronously
-      BlocProvider.of<AppStatsBloc>(context).add(AppStatsInitialUsage(
-        appBinStats: [appStats],
-        apps: apps,
-      ));
+    final appStats = await AppWeekRepositoryImpl().fetchAppData(
+        startDate: Helper.findFirstDateOfTheWeek(today),
+        endDate: Helper.findLastDateOfTheWeek(today),
+        deviceCode: deviceCode);
 
-      for (var appStat in [appStats]) {
-        for (var element in appStat) {
-          await AppWeekRepositoryImpl()
-              .addAppData(element.copyWith(appServiceId: appWeek.pk));
-        }
-      }
-    }
+    // ignore: use_build_context_synchronously
+    BlocProvider.of<AppStatsBloc>(context).add(AppStatsInitialUsage(
+      appBinStats: Helper.fetchAppDataToAppBinStats(appStats),
+      apps: apps,
+    ));
+
     EasyLoading.showSuccess("Done synching");
 
     await Future.delayed(const Duration(seconds: 1), () {

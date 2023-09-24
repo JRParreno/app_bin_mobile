@@ -1,9 +1,12 @@
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
+import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/app_week.dart';
-import 'package:app_bin_mobile/src/features/stats/data/repository/app_week_filter_repository_impl.dart';
-import 'package:app_bin_mobile/src/features/stats/presentation/widgets/app_week_date_card.dart';
+import 'package:app_bin_mobile/src/features/apps/data/repository/app_data_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AppStatisticsFilterScreen extends StatefulWidget {
   static const String routeName = 'app-statistic-filter-screen';
@@ -36,14 +39,27 @@ class _AppStatisticsFilterScreenState extends State<AppStatisticsFilterScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: appWeekResults.length,
-              itemBuilder: (context, index) {
-                final item = appWeekResults[index];
-                return AppWeekDateCard(
-                  appWeek: item,
-                );
+            SfDateRangePicker(
+              selectionMode: DateRangePickerSelectionMode.single,
+              showActionButtons: true,
+              showNavigationArrow: true,
+              onSubmit: (p0) {
+                try {
+                  final date = p0 as DateTime;
+                  fetchAppDataList(date);
+                } catch (e) {
+                  print(e.toString());
+                }
+              },
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            CustomBtn(
+              label: 'Clear Filter',
+              onTap: () {
+                final today = DateTime.now();
+                fetchAppDataList(today);
               },
             )
           ],
@@ -56,18 +72,12 @@ class _AppStatisticsFilterScreenState extends State<AppStatisticsFilterScreen> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     deviceCode = androidInfo.device;
-    getAppWeek(androidInfo.device);
   }
 
-  Future<void> getAppWeek(String? code) async {
-    try {
-      final results = await AppWeekFilterRepositoryImpl()
-          .filterAppWeeks(deviceCode: code ?? deviceCode);
-      setState(() {
-        appWeekResults = results;
-      });
-    } catch (e) {
-      print(e.toString());
-    }
+  Future<void> fetchAppDataList(DateTime date) async {
+    BlocProvider.of<AppStatsBloc>(context)
+        .add(AppStatsFetchUsage(date: date, deviceCode: deviceCode));
+
+    Navigator.pop(context);
   }
 }

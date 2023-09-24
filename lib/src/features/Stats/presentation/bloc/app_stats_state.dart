@@ -15,11 +15,13 @@ class AppStatsLoaded extends AppStatsState {
   final Duration duration;
   final DateTime? start;
   final DateTime? end;
+  final DateTime filterDate;
 
   const AppStatsLoaded({
     required this.appUsage,
     required this.duration,
     required this.apps,
+    required this.filterDate,
     this.start,
     this.end,
   });
@@ -31,5 +33,6 @@ class AppStatsLoaded extends AppStatsState {
         appUsage,
         duration,
         apps,
+        filterDate,
       ];
 }
