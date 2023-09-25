@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "375854479180",
+    "project_id": "appbinappsprod",
+    "storage_bucket": "appbinappsprod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375854479180:android:c104e1e924186be9afc1e9",
+        "android_client_info": {
+          "package_name": "com.thesis.app_bin_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArTtWgR8w_1Z29lCn5vUZCMZDUPlP874w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

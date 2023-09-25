@@ -15,4 +15,5 @@ abstract class ProfileRepository {
     required String pk,
     required String imagePath,
   });
+  Future<void> setPushToken(String token);
 }

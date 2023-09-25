@@ -1,10 +1,11 @@
 import 'package:app_bin_mobile/src/core/bloc/profile/profile_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
+import 'package:app_bin_mobile/src/features/device/view_device/presentation/bloc/pair_device_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class CommonState extends Equatable
-    implements ProfileState, AppStatsState, AppsState {
+    implements ProfileState, AppStatsState, AppsState, PairDeviceUserState {
   const CommonState();
   @override
   List<Object> get props => [];

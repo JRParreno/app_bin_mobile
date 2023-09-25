@@ -1,7 +1,5 @@
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
-import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/app_week.dart';
-import 'package:app_bin_mobile/src/features/apps/data/repository/app_data_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +48,9 @@ class _AppStatisticsFilterScreenState extends State<AppStatisticsFilterScreen> {
                 } catch (e) {
                   print(e.toString());
                 }
+              },
+              onCancel: () {
+                Navigator.pop(context);
               },
             ),
             const SizedBox(

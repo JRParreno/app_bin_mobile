@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:app_bin_mobile/src/core/bloc/common/common_event.dart';
 import 'package:app_bin_mobile/src/core/bloc/common/common_state.dart';
 import 'package:app_bin_mobile/src/core/bloc/profile/profile_bloc.dart';
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
+import 'package:app_bin_mobile/src/core/provider/custom_notification.dart';
 import 'package:app_bin_mobile/src/core/routes/app_route.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/repositories/profile_repository_impl.dart';
@@ -9,20 +12,73 @@ import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+Future<void> firebaseNotificationHandler(RemoteMessage? message) async {
+  if (message != null) {
+    CustomNotification.show(message);
+  }
+}
+
 class AppBin extends StatefulWidget {
   const AppBin({super.key});
+  static final navKey = GlobalKey<NavigatorState>();
 
   @override
   State<AppBin> createState() => _AppBinState();
 }
 
 class _AppBinState extends State<AppBin> {
+  @override
+  void initState() {
+    super.initState();
+
+    initFirebaseMessaging();
+    CustomNotification.initialize();
+  }
+
+  Future<void> initFirebaseMessaging() async {
+    await Firebase.initializeApp();
+
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    // FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
+    //   return;
+    // });
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message == null) return;
+      CustomNotification.onSelectNotification(jsonEncode(message.data));
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      CustomNotification.onSelectNotification(jsonEncode(message.data));
+      CustomNotification.onCheckFireAlertNotification(
+          navKey: AppBin.navKey, message: message);
+    });
+
+    FirebaseMessaging.onMessage.listen(firebaseNotificationHandler);
+  }
+
+  Future<void> registerFcmToken() async {
+    final token = await FirebaseMessaging.instance.getToken();
+
+    if (token != null) {
+      await ProfileRepositoryImpl().setPushToken(token).catchError((onError) {
+        print(onError.toString());
+      });
+    }
+  }
+
   void initialization(BuildContext ctx) async {
     // This is where you can initialize the resources needed by your app while
     // the splash screen is displayed.  Remove the following example because
@@ -58,6 +114,7 @@ class _AppBinState extends State<AppBin> {
       BlocProvider.of<ProfileBloc>(ctx).add(
         SetProfileEvent(profile: profile),
       );
+      registerFcmToken();
     } else {
       BlocProvider.of<ProfileBloc>(ctx).add(
         const InitialEvent(),

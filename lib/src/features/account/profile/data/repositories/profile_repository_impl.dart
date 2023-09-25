@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/core/interceptor/api_interceptor.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
@@ -89,6 +91,24 @@ class ProfileRepositoryImpl extends ProfileRepository {
       throw error;
     }).onError((error, stackTrace) {
       throw error!;
+    });
+  }
+
+  @override
+  Future<void> setPushToken(String token) async {
+    const String url = '${AppConstant.serverUrl}/devices/';
+
+    final data = {
+      "registration_id": token,
+      "type": Platform.isAndroid ? "android" : "ios"
+    };
+
+    await ApiInterceptor.apiInstance()
+        .post(url, data: data)
+        .onError((error, stackTrace) {
+      throw error!;
+    }).catchError((onError) {
+      throw onError;
     });
   }
 }
