@@ -3,6 +3,7 @@ import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/change_password_screen.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/update_account_screen.dart';
+import 'package:app_bin_mobile/src/features/device/request_device/presentation/screen/request_device_screen.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/presentation/screen/view_device_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -66,6 +67,21 @@ class MenuOptions extends StatelessWidget {
                 onTap: () {
                   toNavigateScreen(
                     screen: const ViewDeviceScreen(),
+                    context: context,
+                  );
+                },
+                trailing: const Icon(Icons.chevron_right),
+              ),
+            ),
+          ] else ...[
+            Card(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: ListTile(
+                title: const CustomText(text: "Request Device(s)"),
+                leading: const Icon(Icons.device_hub),
+                onTap: () {
+                  toNavigateScreen(
+                    screen: const RequestDeviceScreen(),
                     context: context,
                   );
                 },

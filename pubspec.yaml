@@ -43,6 +43,7 @@ dependencies:
   firebase_messaging: ^14.6.8
   flutter_local_notifications: ^15.1.1
   firebase_core: ^2.16.0
+  badges: ^3.1.2
 
 dev_dependencies:
   flutter_test:

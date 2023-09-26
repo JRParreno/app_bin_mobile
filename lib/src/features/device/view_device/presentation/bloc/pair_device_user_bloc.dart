@@ -17,8 +17,14 @@ class PairDeviceUserBloc
 
   Future<void> _fetchPairDeviceEvent(
       FetchPairDeviceEvent event, Emitter<PairDeviceUserState> emit) async {
+    emit(const LoadingState());
+
     final results = await _viewDeviceRepository.getPairDevices();
 
-    return emit(PairDeviceUserLoaded(results));
+    if (results.isNotEmpty) {
+      return emit(PairDeviceUserLoaded(results));
+    }
+
+    return emit(const EmptyState());
   }
 }

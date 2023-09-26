@@ -2,8 +2,10 @@ import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/common_widget/custom_appbar.dart';
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/features/device/add_device/data/add_device_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/device/view_device/presentation/bloc/pair_device_user_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:ndialog/ndialog.dart';
 
@@ -68,6 +70,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
         }
       }).whenComplete(() {
         EasyLoading.dismiss();
+        fetchPairDevices();
       });
     }
   }
@@ -87,5 +90,9 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
         ],
       ).show(context);
     });
+  }
+
+  void fetchPairDevices() {
+    BlocProvider.of<PairDeviceUserBloc>(context).add(FetchPairDeviceEvent());
   }
 }

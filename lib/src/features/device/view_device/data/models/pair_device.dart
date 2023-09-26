@@ -47,7 +47,7 @@ class PairDevice extends Equatable {
 
   factory PairDevice.fromMap(Map<String, dynamic> map) {
     return PairDevice(
-      pk: map['user_pair']['user']['pk']?.toInt() ?? 0,
+      pk: map['pk']?.toInt() ?? 0,
       fullName: map['user_pair']['user']['get_full_name'] ?? '',
       pairStatus: map['pair_status'] ?? '',
       profilePhoto: map['user_pair']['profile_photo'],

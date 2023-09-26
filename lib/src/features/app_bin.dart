@@ -10,6 +10,10 @@ import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.
 import 'package:app_bin_mobile/src/features/account/profile/data/repositories/profile_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
+import 'package:app_bin_mobile/src/features/device/request_device/data/repository/request_device_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/device/request_device/presentation/bloc/request_pair_device_user_bloc.dart';
+import 'package:app_bin_mobile/src/features/device/view_device/data/repository/view_device_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/device/view_device/presentation/bloc/pair_device_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -136,6 +140,12 @@ class _AppBinState extends State<AppBin> {
         BlocProvider(create: (ctx) => ProfileBloc()),
         BlocProvider(create: (ctx) => AppsBloc()),
         BlocProvider(create: (ctx) => AppStatsBloc()),
+        BlocProvider(
+            create: (context) =>
+                PairDeviceUserBloc(ViewDeviceRepositoryImpl())),
+        BlocProvider(
+            create: (context) =>
+                RequestPairDeviceUserBloc(RequestDeviceRepositoryImpl())),
       ],
       child: ScreenUtilInit(
         useInheritedMediaQuery: true,
