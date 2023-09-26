@@ -1,19 +1,23 @@
 import 'dart:convert';
 
 class Device {
+  final int pk;
   final String deviceName;
   final String deviceCode;
 
   Device({
+    required this.pk,
     required this.deviceName,
     required this.deviceCode,
   });
 
   Device copyWith({
+    int? pk,
     String? deviceName,
     String? deviceCode,
   }) {
     return Device(
+      pk: pk ?? this.pk,
       deviceName: deviceName ?? this.deviceName,
       deviceCode: deviceCode ?? this.deviceCode,
     );
@@ -21,7 +25,7 @@ class Device {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-
+    result.addAll({'pk': pk});
     result.addAll({'deviceName': deviceName});
     result.addAll({'deviceCode': deviceCode});
 
@@ -30,6 +34,7 @@ class Device {
 
   factory Device.fromMap(Map<String, dynamic> map) {
     return Device(
+      pk: map['pk'],
       deviceName: map['device_name'] ?? '',
       deviceCode: map['device_code'] ?? '',
     );
@@ -49,9 +54,10 @@ class Device {
 
     return other is Device &&
         other.deviceName == deviceName &&
+        other.pk == pk &&
         other.deviceCode == deviceCode;
   }
 
   @override
-  int get hashCode => deviceName.hashCode ^ deviceCode.hashCode;
+  int get hashCode => deviceName.hashCode ^ deviceCode.hashCode ^ pk;
 }

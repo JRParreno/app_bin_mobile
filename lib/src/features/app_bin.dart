@@ -12,6 +12,8 @@ import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/device/request_device/data/repository/request_device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/device/request_device/presentation/bloc/request_pair_device_user_bloc.dart';
+import 'package:app_bin_mobile/src/features/device/view_all_user_device/data/repository/view_all_user_device_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/device/view_all_user_device/presentation/bloc/view_all_user_device_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/data/repository/view_device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/presentation/bloc/pair_device_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
@@ -146,6 +148,9 @@ class _AppBinState extends State<AppBin> {
         BlocProvider(
             create: (context) =>
                 RequestPairDeviceUserBloc(RequestDeviceRepositoryImpl())),
+        BlocProvider(
+            create: (context) =>
+                ViewAllUserDeviceBloc(ViewAllUserDeviceRepositoryImpl())),
       ],
       child: ScreenUtilInit(
         useInheritedMediaQuery: true,
