@@ -39,16 +39,21 @@ class AppWeekRepositoryImpl extends AppWeekRepository {
   }
 
   @override
-  Future<List<AppBinStats>> fetchAppData(
-      {required DateTime startDate,
-      required DateTime endDate,
-      required String deviceCode}) {
+  Future<List<AppBinStats>> fetchAppData({
+    required DateTime startDate,
+    required DateTime endDate,
+    required String deviceCode,
+    String? pk,
+  }) {
     final startDateFormatted = dateFormat.format(startDate);
     final endDateFormatted = dateFormat.format(endDate);
     List<AppBinStats> appBinStats = [];
 
     String url =
         '${AppConstant.apiUrl}/app-data-list?device_code=$deviceCode&start_date=$startDateFormatted&end_date=$endDateFormatted';
+    if (pk != null) {
+      url += '&user_pk=$pk';
+    }
 
     return ApiInterceptor.apiInstance().get(url).then((value) {
       final results = value.data['results'] as List<dynamic>;

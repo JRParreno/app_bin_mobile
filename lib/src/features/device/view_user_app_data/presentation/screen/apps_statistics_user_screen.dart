@@ -1,4 +1,6 @@
-import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_filter_screen.dart';
+import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/bloc/app_stats_user_bloc.dart';
+import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/screen/apps_statistics_user_filter_screen.dart';
+import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/widgets/ListAppDurationWOIcon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -11,20 +13,23 @@ import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/stats/data/models/chart_data.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
-import 'package:app_bin_mobile/src/features/stats/presentation/widgets/list_app_duration.dart';
 
-class AppsStatisticsScreen extends StatefulWidget {
+class AppsStatisticsUserScreen extends StatefulWidget {
   static const String routeName = "/apps-statistics-screen";
+  final String userPk;
+  final String deviceCode;
 
-  const AppsStatisticsScreen({
+  const AppsStatisticsUserScreen({
     super.key,
+    required this.userPk,
+    required this.deviceCode,
   });
 
   @override
-  State<AppsStatisticsScreen> createState() => _AppsStatisticsScreenState();
+  State<AppsStatisticsUserScreen> createState() => _AppsStatisticsScreenState();
 }
 
-class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
+class _AppsStatisticsScreenState extends State<AppsStatisticsUserScreen> {
   @override
   void initState() {
     super.initState();
@@ -41,17 +46,20 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                 // testBloc();
                 toNavigateScreen(
                     context: context,
-                    screen: const AppStatisticsFilterScreen());
+                    screen: AppStatisticsUserFilterScreen(
+                      deviceCode: widget.deviceCode,
+                      userPk: widget.userPk,
+                    ));
               },
               icon: const Icon(Icons.menu))
         ],
       ),
-      body: BlocBuilder<AppStatsBloc, AppStatsState>(
+      body: BlocBuilder<AppStatsUserBloc, AppStatsUserState>(
         builder: (context, state) {
           if (state is InitialState || state is LoadingState) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is AppStatsLoaded) {
-            final chartData = Helper.getAppUsageChartData(state);
+          } else if (state is AppStatsUserLoaded) {
+            final chartData = Helper.getAppUsageUserChartData(state);
             final firstDayWeek = DateFormat('MMM dd, yyyy')
                 .format(Helper.findFirstDateOfTheWeek(state.filterDate));
             final endDayWeek = DateFormat('MMM dd, yyyy')
@@ -139,9 +147,11 @@ class _AppsStatisticsScreenState extends State<AppsStatisticsScreen> {
                       onAxisLabelTapped: (args) {},
                     ),
                   ),
-                  ListAppDuration(
-                    apps: state.appUsage.last,
-                    currentApps: state.apps,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListAppDurationWOIcon(
+                      apps: state.appUsage.last,
+                    ),
                   ),
                 ],
               ),

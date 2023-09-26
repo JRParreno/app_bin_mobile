@@ -50,7 +50,10 @@ class _ViewAllUserDeviceScreenState extends State<ViewAllUserDeviceScreen> {
                 itemBuilder: (context, index) {
                   final item = state.devices[index];
 
-                  return DeviceCard(device: item);
+                  return DeviceCard(
+                    device: item,
+                    userPk: widget.pk,
+                  );
                 },
               ),
             );

@@ -16,6 +16,7 @@ import 'package:app_bin_mobile/src/features/device/view_all_user_device/data/rep
 import 'package:app_bin_mobile/src/features/device/view_all_user_device/presentation/bloc/view_all_user_device_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/data/repository/view_device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/presentation/bloc/pair_device_user_bloc.dart';
+import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/bloc/app_stats_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/onboarding/on_boarding_screen.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -151,6 +152,7 @@ class _AppBinState extends State<AppBin> {
         BlocProvider(
             create: (context) =>
                 ViewAllUserDeviceBloc(ViewAllUserDeviceRepositoryImpl())),
+        BlocProvider(create: (context) => AppStatsUserBloc()),
       ],
       child: ScreenUtilInit(
         useInheritedMediaQuery: true,

@@ -3,6 +3,7 @@ import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/request_device/presentation/bloc/request_pair_device_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/view_all_user_device/presentation/bloc/view_all_user_device_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/presentation/bloc/pair_device_user_bloc.dart';
+import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/bloc/app_stats_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,7 +14,8 @@ abstract class CommonState extends Equatable
         AppsState,
         PairDeviceUserState,
         RequestPairDeviceUserState,
-        ViewAllUserDeviceState {
+        ViewAllUserDeviceState,
+        AppStatsUserState {
   const CommonState();
   @override
   List<Object> get props => [];

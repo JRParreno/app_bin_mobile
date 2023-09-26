@@ -1,5 +1,7 @@
 import 'dart:async';
 // ignore: depend_on_referenced_packages
+import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/bloc/app_stats_user_bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart'; // You have to add this manually, for some reason it cannot be added automatically
 
 import 'package:app_bin_mobile/src/features/apps/data/models/app_bin_stats.dart';
@@ -222,13 +224,41 @@ class Helper {
     return chartData;
   }
 
-  static AppBinStats convertToAppBinStats(AppUsageInfo appUsageInfo) {
+  static List<AppUsageChartData> getAppUsageUserChartData(
+      AppStatsUserLoaded state) {
+    final apps = state.appUsage.where((e) => e.isNotEmpty).toList();
+    final List<AppUsageChartData> chartData = [];
+
+    if (apps.isNotEmpty && apps.last.isNotEmpty) {
+      for (var i = 0; i < apps.length; i++) {
+        Duration duration = const Duration();
+
+        final parentElement = apps[i];
+
+        for (var j = 0; j < parentElement.length; j++) {
+          final element = parentElement[j];
+
+          duration += Duration(hours: element.hours, minutes: element.minutes);
+        }
+        chartData.add(
+          AppUsageChartData(
+              dayName: Helper.getDayName(parentElement.last.startDate.weekday),
+              duration: duration),
+        );
+      }
+    }
+
+    return chartData;
+  }
+
+  static AppBinStats convertToAppBinStats(
+      {required AppUsageInfo appUsageInfo, String? appName}) {
     final minutes = appUsageInfo.usage.inMinutes;
     final startDate = appUsageInfo.startDate.add(const Duration(days: 1));
 
     return AppBinStats(
       id: '',
-      appName: appUsageInfo.appName,
+      appName: appName ?? appUsageInfo.appName,
       packageName: appUsageInfo.packageName,
       hours: appUsageInfo.usage.inHours,
       minutes: minutes > 60 ? (minutes / 60).round() : minutes,
@@ -247,13 +277,14 @@ class Helper {
       final appUsageInfo = appUsageInfos[i];
       final app = tempList.firstWhereOrNull(
           (element) => element.packageName == appUsageInfo.packageName);
-      final appBinStats = convertToAppBinStats(appUsageInfo);
+      final appBinStats = convertToAppBinStats(
+          appUsageInfo: appUsageInfo, appName: app?.appName);
 
       if (app != null) {
         final appIcon = app as ApplicationWithIcon;
         appBinStats.copyWith(icon: appIcon.icon);
       }
-      tempAppBinStats.add(convertToAppBinStats(appUsageInfo));
+      tempAppBinStats.add(appBinStats);
     }
 
     return tempAppBinStats;

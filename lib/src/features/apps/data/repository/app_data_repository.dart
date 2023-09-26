@@ -9,5 +9,6 @@ abstract class AppWeekRepository {
     required DateTime startDate,
     required DateTime endDate,
     required String deviceCode,
+    String? pk,
   });
 }
