@@ -6,7 +6,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.18.6 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -18,7 +18,6 @@ dependencies:
   device_apps: ^2.2.0
   app_usage: ^2.1.1
   permission_handler: ^10.2.0
-  syncfusion_flutter_charts: ^21.1.41
   flutter_gen_runner: 5.1.0+1
   build_runner: ^2.3.3
   flutter_svg: ^1.1.6
@@ -39,11 +38,15 @@ dependencies:
   usage_stats: ^1.2.0
   flutter_app_lock: ^3.0.0
   intl: ^0.18.1
-  syncfusion_flutter_datepicker: ^21.2.10
   firebase_messaging: ^14.6.8
   flutter_local_notifications: ^15.1.1
   firebase_core: ^2.16.0
-  badges: ^3.1.2
+  badges: ^3.1.1
+  syncfusion_flutter_datepicker: ^21.2.10
+  syncfusion_flutter_charts: ^20.4.54
+
+dependency_overrides:
+  syncfusion_flutter_datepicker: "20.2.43"
 
 dev_dependencies:
   flutter_test:

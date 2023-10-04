@@ -1,6 +1,7 @@
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/data/models/pair_device.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 
 class RequestPairDeviceCard extends StatelessWidget {
@@ -53,8 +54,9 @@ class RequestPairDeviceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Badge(
-                  label: CustomText(text: pairDevice.pairStatus.toLowerCase()),
-                  backgroundColor: Colors.blue,
+                  badgeContent:
+                      CustomText(text: pairDevice.pairStatus.toLowerCase()),
+                  badgeStyle: const BadgeStyle(badgeColor: Colors.blue),
                 ),
                 if (pairDevice.pairStatus == 'PENDING') ...[
                   Row(
