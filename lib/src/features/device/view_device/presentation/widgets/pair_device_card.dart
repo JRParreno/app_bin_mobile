@@ -1,7 +1,7 @@
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/features/device/view_all_user_device/presentation/screen/view_all_user_device_screen.dart';
 import 'package:app_bin_mobile/src/features/device/view_device/data/models/pair_device.dart';
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -63,10 +63,10 @@ class PairDeviceCard extends StatelessWidget {
               if (pairDevice.pairStatus == 'ACCEPTED') ...[
                 const Icon(Icons.chevron_right),
               ] else ...[
-                Badge(
+                badges.Badge(
                   badgeContent:
                       CustomText(text: pairDevice.pairStatus.toLowerCase()),
-                  badgeStyle: const BadgeStyle(badgeColor: Colors.blue),
+                  badgeStyle: const badges.BadgeStyle(badgeColor: Colors.blue),
                 ),
               ],
             ],

@@ -1,5 +1,6 @@
 import 'package:app_bin_mobile/src/core/bloc/profile/profile_bloc.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
+import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/features/account/login/data/repositories/login_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/account/login/presentation/widgets/login_form.dart';
@@ -118,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Future.delayed(const Duration(milliseconds: 500), () {
             CommonDialog.showMyDialog(
               context: context,
-              title: "FireGuard",
+              title: AppConstant.appName,
               body: "Invalid email or password",
               isError: true,
             );

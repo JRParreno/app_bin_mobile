@@ -25,7 +25,7 @@ class AppInstalledList extends StatelessWidget {
         alignment: WrapAlignment.start,
         runAlignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: MediaQuery.of(context).size.width * 0.04,
+        spacing: 15,
         runSpacing: 4,
         direction: Axis.horizontal,
         children: [
