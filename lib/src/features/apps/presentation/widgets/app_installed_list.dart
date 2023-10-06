@@ -25,16 +25,20 @@ class AppInstalledList extends StatelessWidget {
         alignment: WrapAlignment.start,
         runAlignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 15,
+        spacing: 23,
         runSpacing: 4,
         direction: Axis.horizontal,
         children: [
           for (var app in apps)
-            AppInstalledTile(
-              app: app.application as ApplicationWithIcon,
-              isBlock: app.isBlock,
-              disableOnTap: disableOnTap,
-              schedule: schedule,
+            SizedBox(
+              height: 100,
+              width: MediaQuery.of(context).size.width * 0.18,
+              child: AppInstalledTile(
+                app: app.application as ApplicationWithIcon,
+                isBlock: app.isBlock,
+                disableOnTap: disableOnTap,
+                schedule: schedule,
+              ),
             ),
         ],
       ),

@@ -24,7 +24,7 @@ class AppInstalledTile extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (!disableOnTap) {
-          if (isAppBlock()) {
+          if (isAppBlock() && isBlock) {
             PersistentNavBarNavigator.pushNewScreen(
               context,
               screen: PromptBlockScreen(args: PromptBlockArgs(app: app)),

@@ -133,7 +133,7 @@ class _AppBinState extends State<AppBin> {
     required List<String> whiteList,
     required BuildContext ctx,
   }) {
-    BlocProvider.of<AppsBloc>(ctx).add(const AppsLoadInitEvent(whiteList: []));
+    BlocProvider.of<AppsBloc>(ctx).add(AppsLoadInitEvent(whiteList: whiteList));
   }
 
   @override
