@@ -10,6 +10,7 @@ import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bl
 import 'package:app_usage/app_usage.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
+import 'package:usage_stats/usage_stats.dart';
 // import 'package:device_apps/device_apps.dart';
 
 class Helper {
@@ -58,15 +59,6 @@ class Helper {
     return result;
   }
 
-  static FutureOr<List<AppBinStats>> getCurrentAppUsage({
-    required DateTime startTime,
-    required DateTime endTime,
-  }) async {
-    final tempAppUsage =
-        await getAppUsage(endTime: endTime, startTime: startTime);
-    return tempAppUsage.first;
-  }
-
   static Future<Duration> getCurrentDuration({
     List<AppBinStats>? appBinstats,
   }) async {
@@ -92,11 +84,11 @@ class Helper {
         .toList();
   }
 
-  static List<AppUsageInfo> filterAppUsageInfo({
-    required List<AppUsageInfo> usages,
+  static List<UsageInfo> filterAppUsageInfo({
+    required List<UsageInfo> usages,
     required List<Application> apps,
   }) {
-    List<AppUsageInfo> filterAppUsages = [];
+    List<UsageInfo> filterAppUsages = [];
 
     filterAppUsages = usages.where((e) {
       final checkAppExists = apps.where((element) {
@@ -106,47 +98,6 @@ class Helper {
     }).toList();
 
     return filterAppUsages;
-  }
-
-  static FutureOr<List<List<AppBinStats>>> getAppUsage({
-    DateTime? startTime,
-    DateTime? endTime,
-  }) async {
-    List<List<AppUsageInfo>> weekUsageInfo = [];
-    List<List<AppBinStats>> appBinStats = [];
-
-    final date = startTime ?? DateTime.now();
-    final startDate = endTime != null
-        ? getDate(endTime.subtract(Duration(days: endTime.weekday - 1)))
-        : Helper.findFirstDateOfTheWeek(date);
-
-    final weeksRange = getWeeksForRange(start: startDate, end: date);
-    final tempList = await getListOfApps();
-
-    for (var i = 0; i < weeksRange.first.length; i++) {
-      final element = weeksRange.first[i];
-      final startDateRange = DateTime(element.year, element.month, element.day);
-      final endDateRange = date.day == element.day
-          ? date
-          : DateTime(element.year, element.month, element.day, 23, 59);
-
-      final tempAppUsageInfoList =
-          await AppUsage().getAppUsage(startDateRange, endDateRange);
-      final appUsageInfoList =
-          filterAppUsageInfo(usages: tempAppUsageInfoList, apps: tempList);
-
-      weekUsageInfo.add(appUsageInfoList);
-
-      if (date.day == element.day) break;
-    }
-
-    for (var i = 0; i < weekUsageInfo.length; i++) {
-      final element = weekUsageInfo[i];
-      final appBinStatsList = await convertToListAppBinStats(element);
-      appBinStats.add(appBinStatsList);
-    }
-
-    return appBinStats;
   }
 
   static double getMaxHours(List<AppUsageInfo> appUsageInfos) {
@@ -251,24 +202,34 @@ class Helper {
     return chartData;
   }
 
-  static AppBinStats convertToAppBinStats(
-      {required AppUsageInfo appUsageInfo, String? appName}) {
-    final minutes = appUsageInfo.usage.inMinutes;
-    final startDate = appUsageInfo.startDate.add(const Duration(days: 1));
+  static AppBinStats convertToAppBinStats({
+    required UsageInfo appUsageInfo,
+    String? appName,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final totalForegroundInMinutes =
+        int.parse(appUsageInfo.totalTimeInForeground!) / 1000 / 60;
+
+    final int minutes = totalForegroundInMinutes.toInt();
+    final hours = (minutes * 0.0166667).toInt();
 
     return AppBinStats(
       id: '',
-      appName: appName ?? appUsageInfo.appName,
-      packageName: appUsageInfo.packageName,
-      hours: appUsageInfo.usage.inHours,
+      appName: appName ?? '',
+      packageName: appUsageInfo.packageName ?? '',
+      hours: hours,
       minutes: minutes > 60 ? (minutes / 60).round() : minutes,
       startDate: startDate,
-      endDate: appUsageInfo.endDate,
+      endDate: endDate,
     );
   }
 
-  static Future<List<AppBinStats>> convertToListAppBinStats(
-      List<AppUsageInfo> appUsageInfos) async {
+  static Future<List<AppBinStats>> convertToListAppBinStats({
+    required List<UsageInfo> appUsageInfos,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
     final List<AppBinStats> tempAppBinStats = [];
 
     final tempList = await getListOfApps();
@@ -278,7 +239,11 @@ class Helper {
       final app = tempList.firstWhereOrNull(
           (element) => element.packageName == appUsageInfo.packageName);
       final appBinStats = convertToAppBinStats(
-          appUsageInfo: appUsageInfo, appName: app?.appName);
+        appUsageInfo: appUsageInfo,
+        appName: app?.appName,
+        startDate: startDate,
+        endDate: endDate,
+      );
 
       if (app != null) {
         final appIcon = app as ApplicationWithIcon;
@@ -327,13 +292,25 @@ class Helper {
     final tempList = apps ?? await getListOfApps();
 
     final tempAppUsageInfoList =
-        await AppUsage().getAppUsage(startDate, endDate);
+        await usageInfos(startDate: startDate, endDate: endDate);
+
     final sortHighUsage = tempAppUsageInfoList
-      ..sort((a, b) => b.usage.compareTo(a.usage));
+      ..sort((a, b) {
+        final aTotalForeground =
+            int.parse(a.totalTimeInForeground!) / 1000 / 60;
+        final bTotalForeground =
+            int.parse(b.totalTimeInForeground!) / 1000 / 60;
+        return aTotalForeground.compareTo(bTotalForeground);
+      });
+
     final appUsageInfoList =
         filterAppUsageInfo(usages: sortHighUsage, apps: tempList);
 
-    final appBinStatsList = await convertToListAppBinStats(appUsageInfoList);
+    final appBinStatsList = await convertToListAppBinStats(
+      appUsageInfos: appUsageInfoList,
+      startDate: startDate,
+      endDate: endDate,
+    );
 
     return appBinStatsList;
   }
@@ -364,5 +341,43 @@ class Helper {
     }
 
     return results;
+  }
+
+  static Future<List<UsageInfo>> usageInfos({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final List<UsageInfo> infos = [];
+
+    final usage = await UsageStats.queryUsageStats(startDate, endDate);
+
+    for (var i in usage) {
+      String currentForeground = i.totalTimeInForeground!;
+
+      if (double.parse(currentForeground) > 0) {
+        final usageExists = infos.firstWhereOrNull(
+            (element) => element.packageName == i.packageName);
+        if (usageExists != null) {
+          final usageForeGround =
+              double.parse(usageExists.totalTimeInForeground!);
+
+          if (usageForeGround > double.parse(currentForeground)) {
+            currentForeground = usageExists.totalTimeInForeground!;
+          }
+          infos.remove(usageExists);
+        }
+        infos.add(
+          UsageInfo(
+            firstTimeStamp: i.firstTimeStamp,
+            lastTimeStamp: i.lastTimeStamp,
+            lastTimeUsed: i.lastTimeUsed,
+            packageName: i.packageName,
+            totalTimeInForeground: currentForeground,
+          ),
+        );
+      }
+    }
+
+    return infos;
   }
 }

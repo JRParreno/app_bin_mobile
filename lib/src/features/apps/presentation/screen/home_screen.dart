@@ -127,7 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final apps = await Helper.getListOfApps();
 
     final dailyUsageApp = await Helper.getDailyAppUsage(apps: apps);
-    // await Helper.getAppUsage();
 
     final today = DateTime.now();
 
