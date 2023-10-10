@@ -27,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int currentTab = 0;
 
+  late final AppStatsBloc appStatsBloc;
+
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
@@ -68,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    appStatsBloc = BlocProvider.of<AppStatsBloc>(context);
     WidgetsBinding.instance.addPostFrameCallback((_) => getDeviceInfo());
     super.initState();
   }
@@ -77,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<AppStatsBloc, AppStatsState>(
+          bloc: appStatsBloc,
           builder: (context, state) {
             return SizedBox(
               child: PersistentBottomNavigation(
@@ -108,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         await registerDeviceInfo(
             deviceCode: deviceCode, deviceName: deviceName);
+        return;
       }
     }
 
@@ -121,6 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final device = await DeviceRepositoryImpl()
         .registerUserDevice(deviceCode: deviceCode, deviceName: deviceName);
     await LocalStorage.storeLocalStorage('_device', device.toJson());
+
+    await syncAppData(deviceCode);
   }
 
   Future<void> syncAppData(String deviceCode) async {
@@ -140,8 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
         endDate: Helper.findLastDateOfTheWeek(today),
         deviceCode: deviceCode);
 
-    // ignore: use_build_context_synchronously
-    BlocProvider.of<AppStatsBloc>(context).add(AppStatsInitialUsage(
+    appStatsBloc.add(AppStatsInitialUsage(
       appBinStats: Helper.fetchAppDataToAppBinStats(appStats),
       apps: apps,
     ));

@@ -6,6 +6,7 @@ import 'package:app_bin_mobile/src/features/account/login/data/repositories/logi
 import 'package:app_bin_mobile/src/features/account/login/presentation/widgets/login_form.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/repositories/profile_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,7 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ]);
         });
+        return;
       }
+      handleGetApps();
     } catch (e) {
       print(e.toString());
     }
@@ -157,5 +160,12 @@ class _LoginScreenState extends State<LoginScreen> {
     BlocProvider.of<ProfileBloc>(context).add(
       SetProfileEvent(profile: profile),
     );
+  }
+
+  void handleGetApps() {
+    if (isAppUsageEnable) {
+      BlocProvider.of<AppsBloc>(context)
+          .add(const AppsLoadInitEvent(whiteList: []));
+    }
   }
 }

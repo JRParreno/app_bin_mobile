@@ -7,9 +7,11 @@ import 'package:app_bin_mobile/src/features/account/profile/data/repositories/pr
 import 'package:app_bin_mobile/src/features/account/signup/data/models/signup.dart';
 import 'package:app_bin_mobile/src/features/account/signup/data/repositories/signup_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/account/signup/presentation/widgets/signup_form.dart';
+import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:usage_stats/usage_stats.dart';
 
 import '../../../../../core/common_widget/common_widget.dart';
 
@@ -34,10 +36,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _confirmPasswordVisible = true;
   bool _isCheck = false;
   bool _isParentUser = false;
+  bool isAppUsageEnable = false;
 
   @override
   void initState() {
-    // handleTest();
+    handleTest();
+    handleAppUsagePermission();
     super.initState();
   }
 
@@ -126,40 +130,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void handleSignup() {
-    if (signupFormKey.currentState!.validate()) {
-      if (_isCheck) {
-        LoaderDialog.show(context: context);
-        final signup = Signup(
-          email: emailCtrl.text,
-          password: passwordCtrl.text,
-          confirmPassword: confirmPasswordCtrl.text,
-          firstName: firstNameCtrl.text,
-          lastName: lastNameCtrl.text,
-          isParent: _isParentUser,
-        );
-        SignupImpl().register(signup).then((value) async {
-          await LocalStorage.storeLocalStorage(
-              '_token', value['data']['access_token']);
-          await LocalStorage.storeLocalStorage(
-              '_refreshToken', value['data']['refresh_token']);
-          handleGetProfile();
-        }).catchError((onError) {
-          LoaderDialog.hide(context: context);
-          Future.delayed(const Duration(milliseconds: 500), () {
-            CommonDialog.showMyDialog(
-              context: context,
-              body: onError['data']['error_message'],
-              isError: true,
-            );
+    if (isAppUsageEnable) {
+      if (signupFormKey.currentState!.validate()) {
+        if (_isCheck) {
+          LoaderDialog.show(context: context);
+          final signup = Signup(
+            email: emailCtrl.text,
+            password: passwordCtrl.text,
+            confirmPassword: confirmPasswordCtrl.text,
+            firstName: firstNameCtrl.text,
+            lastName: lastNameCtrl.text,
+            isParent: _isParentUser,
+          );
+          SignupImpl().register(signup).then((value) async {
+            await LocalStorage.storeLocalStorage(
+                '_token', value['data']['access_token']);
+            await LocalStorage.storeLocalStorage(
+                '_refreshToken', value['data']['refresh_token']);
+            handleGetProfile();
+          }).catchError((onError) {
+            LoaderDialog.hide(context: context);
+            Future.delayed(const Duration(milliseconds: 500), () {
+              CommonDialog.showMyDialog(
+                context: context,
+                body: onError['data']['error_message'],
+                isError: true,
+              );
+            });
           });
-        });
-      } else {
-        CommonDialog.showMyDialog(
-          context: context,
-          body: "Please agree to terms and conditions",
-        );
+        } else {
+          CommonDialog.showMyDialog(
+            context: context,
+            body: "Please agree to terms and conditions",
+          );
+        }
       }
+      return;
     }
+
+    handleAppUsagePermission();
   }
 
   void handleGetProfile() async {
@@ -197,5 +206,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
     confirmPasswordCtrl.text = '2020Rtutest@';
     firstNameCtrl.text = 'jr';
     lastNameCtrl.text = 'parreno';
+  }
+
+  Future<void> handleAppUsagePermission() async {
+    try {
+      final permission = await UsageStats.checkUsagePermission() ?? false;
+
+      setState(() {
+        isAppUsageEnable = permission;
+      });
+
+      if (!permission) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          CommonDialog.showMyDialog(
+              context: context,
+              body: 'You need to enable app usage in app settings',
+              isError: true,
+              buttons: [
+                TextButton(
+                  child: const Text("Ok"),
+                  onPressed: () async {
+                    UsageStats.grantUsagePermission();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ]);
+        });
+        return;
+      }
+      handleGetApps();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void handleGetApps() {
+    if (isAppUsageEnable) {
+      BlocProvider.of<AppsBloc>(context)
+          .add(const AppsLoadInitEvent(whiteList: []));
+    }
   }
 }
