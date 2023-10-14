@@ -1,5 +1,6 @@
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
+import 'package:app_bin_mobile/src/features/account/forgot_password/presentation/screen/forgot_password_screen.dart';
 import 'package:app_bin_mobile/src/features/account/login/presentation/widgets/login_header.dart';
 import 'package:app_bin_mobile/src/features/account/signup/presentation/screen/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +92,14 @@ class LoginForm extends StatelessWidget {
                         height: 10,
                         color: Colors.transparent,
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 15.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
                         child: CustomTextLink(
                           text: "Forgot Password",
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(ForgotPasswordScreen.routeName);
+                          },
                         ),
                       )
                     ],

@@ -1,3 +1,4 @@
+import 'package:app_bin_mobile/src/features/account/forgot_password/presentation/screen/forgot_password_screen.dart';
 import 'package:app_bin_mobile/src/features/account/login/presentation/screen/login_screen.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/change_password_screen.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
@@ -56,6 +57,8 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
             return const AddBlockAppScreen();
           case AddDeviceScreen.routeName:
             return const AddDeviceScreen();
+          case ForgotPasswordScreen.routeName:
+            return const ForgotPasswordScreen();
         }
         return const Scaffold(
           resizeToAvoidBottomInset: false,
