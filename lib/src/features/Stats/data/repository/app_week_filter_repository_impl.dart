@@ -15,7 +15,8 @@ class AppWeekFilterRepositoryImpl implements AppWeekFilterRepository {
     DateTime? endDate,
     required String deviceCode,
   }) async {
-    String url = '${AppConstant.apiUrl}/app-week-list?device_code=$deviceCode';
+    String url =
+        '${AppConstant.apiUrl}/app-week-list?device_code=$deviceCode&limit=700';
     Map<String, String> data = {"device_code": deviceCode};
 
     if (startDate != null && endDate != null) {

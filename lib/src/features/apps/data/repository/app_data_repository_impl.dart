@@ -50,7 +50,7 @@ class AppWeekRepositoryImpl extends AppWeekRepository {
     List<AppBinStats> appBinStats = [];
 
     String url =
-        '${AppConstant.apiUrl}/app-data-list?device_code=$deviceCode&start_date=$startDateFormatted&end_date=$endDateFormatted';
+        '${AppConstant.apiUrl}/app-data-list?device_code=$deviceCode&start_date=$startDateFormatted&end_date=$endDateFormatted&limit=700';
     if (pk != null) {
       url += '&user_pk=$pk';
     }
