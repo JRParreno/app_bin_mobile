@@ -1,6 +1,7 @@
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/core/interceptor/api_interceptor.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/device.dart';
+import 'package:app_bin_mobile/src/features/apps/data/models/device_app.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository.dart';
 
 class DeviceRepositoryImpl extends DeviceRepository {
@@ -39,6 +40,29 @@ class DeviceRepositoryImpl extends DeviceRepository {
       final response = Device.fromMap(value.data);
 
       return response;
+    }).catchError((error) {
+      throw error;
+    }).onError((error, stackTrace) {
+      throw error!;
+    });
+  }
+
+  @override
+  Future<void> syncDeviceApps(List<DeviceApp> apps) async {
+    const String url = '${AppConstant.apiUrl}/device-apps';
+    final tempApps = apps.map((e) => e.formData()).toList();
+
+    final data = {
+      "apps": tempApps,
+    };
+
+    return await ApiInterceptor.apiInstance()
+        .post(
+      url,
+      data: data,
+    )
+        .then((value) {
+      return;
     }).catchError((error) {
       throw error;
     }).onError((error, stackTrace) {

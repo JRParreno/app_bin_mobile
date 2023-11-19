@@ -11,6 +11,10 @@ class Device {
     required this.deviceCode,
   });
 
+  factory Device.empty() {
+    return Device(pk: -1, deviceName: '', deviceCode: '');
+  }
+
   Device copyWith({
     int? pk,
     String? deviceName,

@@ -1,4 +1,5 @@
 import 'package:app_bin_mobile/src/features/apps/data/models/device.dart';
+import 'package:app_bin_mobile/src/features/apps/data/models/device_app.dart';
 
 abstract class DeviceRepository {
   Future<Device?> getUserDevice({
@@ -8,4 +9,6 @@ abstract class DeviceRepository {
     required String deviceCode,
     required String deviceName,
   });
+
+  Future<void> syncDeviceApps(List<DeviceApp> apps);
 }

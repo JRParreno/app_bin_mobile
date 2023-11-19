@@ -1,5 +1,6 @@
 import 'dart:async';
 // ignore: depend_on_referenced_packages
+import 'package:app_bin_mobile/src/features/apps/data/models/device_app.dart';
 import 'package:app_bin_mobile/src/features/device/view_user_app_data/presentation/bloc/app_stats_user_bloc.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart'; // You have to add this manually, for some reason it cannot be added automatically
@@ -379,5 +380,20 @@ class Helper {
     }
 
     return infos;
+  }
+
+  static List<DeviceApp> convertAppsToDeviceApps({
+    required List<Application> apps,
+    required String deviceId,
+  }) {
+    final convertedApps = apps
+        .map((app) => DeviceApp.toDeviceApp(app: app, deviceId: deviceId))
+        .toList();
+
+    if (convertedApps.isNotEmpty) {
+      return convertedApps;
+    }
+
+    return [];
   }
 }

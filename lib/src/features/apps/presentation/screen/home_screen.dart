@@ -1,6 +1,9 @@
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
+import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
+import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
+import 'package:app_bin_mobile/src/features/apps/data/models/device.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/app_data_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
@@ -40,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
+    final profile = ProfileUtils.userProfile(context);
+
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.cube_box),
@@ -47,12 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.shield),
-        title: ("Blocking"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+      if (profile != null && profile.isParent) ...[
+        PersistentBottomNavBarItem(
+          icon: const Icon(CupertinoIcons.shield),
+          title: ("Blocking"),
+          activeColorPrimary: CupertinoColors.activeBlue,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+        ),
+      ],
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.chart_bar),
         title: ("Statistics"),
@@ -116,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    await syncAppData(deviceCode);
+    await syncAppData(Device.fromJson(currentDeviceInfo));
   }
 
   Future<void> registerDeviceInfo({
@@ -127,10 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
         .registerUserDevice(deviceCode: deviceCode, deviceName: deviceName);
     await LocalStorage.storeLocalStorage('_device', device.toJson());
 
-    await syncAppData(deviceCode);
+    await syncAppData(device);
   }
 
-  Future<void> syncAppData(String deviceCode) async {
+  Future<void> syncAppData(Device device) async {
     final apps = await Helper.getListOfApps();
 
     final dailyUsageApp = await Helper.getDailyAppUsage(apps: apps);
@@ -139,13 +146,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     for (var stats in dailyUsageApp) {
       await AppWeekRepositoryImpl()
-          .addAppData(appBinStats: stats, deviceCode: deviceCode);
+          .addAppData(appBinStats: stats, deviceCode: device.deviceCode);
     }
+
+    final syncApps = Helper.convertAppsToDeviceApps(
+        apps: apps, deviceId: device.pk.toString());
+
+    await DeviceRepositoryImpl().syncDeviceApps(syncApps);
 
     final appStats = await AppWeekRepositoryImpl().fetchAppData(
         startDate: Helper.findFirstDateOfTheWeek(today),
         endDate: Helper.findLastDateOfTheWeek(today),
-        deviceCode: deviceCode);
+        deviceCode: device.deviceCode);
 
     appStatsBloc.add(AppStatsInitialUsage(
       appBinStats: Helper.fetchAppDataToAppBinStats(appStats),
