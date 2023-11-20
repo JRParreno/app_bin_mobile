@@ -10,6 +10,7 @@ import 'package:app_bin_mobile/src/features/apps/data/models/device.dart';
 import 'package:app_bin_mobile/src/features/block/data/models/block_app.dart';
 import 'package:app_bin_mobile/src/features/block/data/models/schedule.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/bloc/block_apps/block_apps_bloc.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/bloc/schedule_bloc/schedule_bloc.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/remote_block/remote_select_block_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/widget/device/list_block_apps.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ class _AddUsageLimitState extends State<RemoteAddUsageLimitScreen> {
   bool isSetSchedule = false;
   Schedule? mySchedule;
   late final BlockAppsBloc blockAppsBloc;
+  late final ScheduleBloc scheduleBloc;
 
   @override
   void initState() {
@@ -63,71 +65,88 @@ class _AddUsageLimitState extends State<RemoteAddUsageLimitScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: mySchedule != null
-                          ? MainAxisAlignment.spaceBetween
-                          : MainAxisAlignment.start,
-                      children: [
-                        const CustomText(
-                          text: 'Set Schedule',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 35),
+              BlocBuilder<ScheduleBloc, ScheduleBlocState>(
+                bloc: scheduleBloc,
+                builder: (context, state) {
+                  if (state.viewStatus == ViewStatus.loading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (state.viewStatus == ViewStatus.failed) {
+                    return Center(
+                      child: CustomText(text: state.errorMessage),
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 20,
                         ),
-                        if (mySchedule != null) ...[
-                          IconButton(
-                            onPressed: handleChangeSchedule,
-                            icon: const Icon(
-                              Icons.delete,
-                              size: 30,
-                              color: ColorName.primary,
+                        child: Row(
+                          mainAxisAlignment: state.schedule.device > 0
+                              ? MainAxisAlignment.spaceBetween
+                              : MainAxisAlignment.start,
+                          children: [
+                            const CustomText(
+                              text: 'Set Schedule',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 35),
                             ),
-                          )
-                        ],
-                      ],
-                    ),
-                  ),
-                  if (mySchedule != null) ...[
-                    scheduleDisplay(),
-                  ] else ...[
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40),
-                        child: CustomText(
-                          text: 'No schedule found',
+                            if (state.schedule.device > 0) ...[
+                              IconButton(
+                                onPressed: handleChangeSchedule,
+                                icon: const Icon(
+                                  Icons.delete,
+                                  size: 30,
+                                  color: ColorName.primary,
+                                ),
+                              )
+                            ],
+                          ],
                         ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: CustomBtn(
-                            label: "Add Hourly",
-                            onTap: () => handleSetSchedule(true),
-                            width: null,
+                      if (state.schedule.device > 0) ...[
+                        scheduleDisplay(state.schedule),
+                      ] else ...[
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 40),
+                            child: CustomText(
+                              text: 'No schedule found',
+                            ),
                           ),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Flexible(
-                          child: CustomBtn(
-                            label: "Add Daily",
-                            onTap: () => handleSetSchedule(false),
-                            width: null,
-                          ),
-                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: CustomBtn(
+                                label: "Add Hourly",
+                                onTap: () => handleSetSchedule(true),
+                                width: null,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Flexible(
+                              child: CustomBtn(
+                                label: "Add Daily",
+                                onTap: () => handleSetSchedule(false),
+                                width: null,
+                              ),
+                            ),
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                ],
+                    ],
+                  );
+                },
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 50),
@@ -196,7 +215,10 @@ class _AddUsageLimitState extends State<RemoteAddUsageLimitScreen> {
 
   void handleSetBloc() {
     blockAppsBloc = BlocProvider.of<BlockAppsBloc>(context);
+    scheduleBloc = BlocProvider.of<ScheduleBloc>(context);
+
     blockAppsBloc.add(GetBlockAppsEvent(widget.args.device.deviceCode));
+    scheduleBloc.add(GetScheduleEvent(widget.args.device.pk.toString()));
   }
 
   void handleNavigate(List<BlockApp> apps) {
@@ -211,79 +233,73 @@ class _AddUsageLimitState extends State<RemoteAddUsageLimitScreen> {
     });
   }
 
-  Widget scheduleDisplay() {
-    final schedule = mySchedule;
+  Widget scheduleDisplay(Schedule schedule) {
+    final hours = schedule.hours;
+    final minutes = schedule.minutes;
 
-    if (schedule != null) {
-      final hours = schedule.hours;
-      final minutes = schedule.minutes;
+    final hoursStr = hours > 0 ? '$hours hrs ' : '';
+    final minuesStr =
+        minutes > 0 ? '${minutes > 60 ? minutes - 60 : minutes} mins' : '';
+    final title = schedule.isHourly ? 'Hourly' : 'Daily';
 
-      final hoursStr = hours > 0 ? '$hours hrs ' : '';
-      final minuesStr =
-          minutes > 0 ? '${minutes > 60 ? minutes - 60 : minutes} mins' : '';
-      final title = schedule.isHourly ? 'Hourly' : 'Daily';
+    final meridean = schedule.myDateTime.hour > 12;
+    final startAt =
+        '${meridean ? schedule.myDateTime.hour - 12 : schedule.myDateTime.hour}:${schedule.myDateTime.minute} ${meridean ? "PM" : "AM"}';
 
-      final meridean = schedule.myDateTime.hour > 12;
-      final startAt =
-          '${meridean ? schedule.myDateTime.hour - 12 : schedule.myDateTime.hour}:${schedule.myDateTime.minute} ${meridean ? "PM" : "AM"}';
+    final endTime = DateTime(
+            schedule.myDateTime.year,
+            schedule.myDateTime.month,
+            schedule.myDateTime.day,
+            schedule.myDateTime.hour,
+            schedule.myDateTime.minute)
+        .add(Duration(hours: schedule.hours, minutes: schedule.minutes));
+    final endMeridean = endTime.hour > 12;
 
-      final endTime = DateTime(
-              schedule.myDateTime.year,
-              schedule.myDateTime.month,
-              schedule.myDateTime.day,
-              schedule.myDateTime.hour,
-              schedule.myDateTime.minute)
-          .add(Duration(hours: schedule.hours, minutes: schedule.minutes));
-      final endMeridean = endTime.hour > 12;
+    final endAt =
+        '${endMeridean ? endTime.hour - 12 : endTime.hour}:${endTime.minute > 0 ? "${endTime.minute}" : '00'} ${endMeridean ? "PM" : "AM"}';
 
-      final endAt =
-          '${endMeridean ? endTime.hour - 12 : endTime.hour}:${endTime.minute > 0 ? "${endTime.minute}" : '00'} ${endMeridean ? "PM" : "AM"}';
-
-      return Padding(
-        padding: const EdgeInsets.only(
-          left: 20,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText(
-              text: 'Schedule Type: $title',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                fontStyle: FontStyle.italic,
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 20,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: 'Schedule Type: $title',
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              fontStyle: FontStyle.italic,
             ),
-            CustomText(
-              text: 'Block apps start at: $startAt',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                fontStyle: FontStyle.italic,
-              ),
+          ),
+          CustomText(
+            text: 'Block apps start at: $startAt',
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              fontStyle: FontStyle.italic,
             ),
-            CustomText(
-              text: 'Block apps end at: $endAt',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                fontStyle: FontStyle.italic,
-              ),
+          ),
+          CustomText(
+            text: 'Block apps end at: $endAt',
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              fontStyle: FontStyle.italic,
             ),
-            CustomText(
-              text: 'Duration: $hoursStr$minuesStr',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                fontStyle: FontStyle.italic,
-              ),
+          ),
+          CustomText(
+            text: 'Duration: $hoursStr$minuesStr',
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              fontStyle: FontStyle.italic,
             ),
-          ],
-        ),
-      );
-    }
-
-    return const SizedBox();
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> checkSchedule() async {
@@ -318,11 +334,7 @@ class _AddUsageLimitState extends State<RemoteAddUsageLimitScreen> {
 
   Future<void> handleDeleteSchedule() async {
     // ignore: use_build_context_synchronously
-    BlocProvider.of<AppsBloc>(context).add(AppsDeleteScheduleEvent());
-    await LocalStorage.deleteLocalStorage(AppConstant.schedule);
-    setState(() {
-      mySchedule = null;
-    });
+    scheduleBloc.add(DeleteScheduleEvent());
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
   }
@@ -342,22 +354,17 @@ class _AddUsageLimitState extends State<RemoteAddUsageLimitScreen> {
       final DateTime now = DateTime.now();
 
       final hourlySchedule = Schedule(
+        device: widget.args.device.pk,
         myDateTime: DateTime(now.year, now.month, now.day, selectedTime.hour,
             selectedTime.minute),
         isHourly: isHourly,
         hours: duration.inHours,
         minutes: duration.inMinutes,
       );
-
       // ignore: use_build_context_synchronously
-      BlocProvider.of<AppsBloc>(context)
-          .add(AppsScheduleEvent(schedule: hourlySchedule));
-
-      await LocalStorage.storeLocalStorage(
-          AppConstant.schedule, hourlySchedule.toJson());
-      setState(() {
-        mySchedule = hourlySchedule;
-      });
+      scheduleBloc.add(
+        CreateScheduleEvent(hourlySchedule),
+      );
     }
   }
 }

@@ -12,6 +12,7 @@ import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
 import 'package:app_bin_mobile/src/features/block/data/repository/block_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/block/data/repository/schedule_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/bloc/block_apps/block_apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/bloc/block_select_app/block_select_app_bloc.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/bloc/user_device/user_device_bloc.dart';
@@ -31,6 +32,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'block/presentation/bloc/schedule_bloc/schedule_bloc.dart';
 
 Future<void> firebaseNotificationHandler(RemoteMessage? message) async {
   if (message != null) {
@@ -162,6 +165,8 @@ class _AppBinState extends State<AppBin> {
             create: (context) => BlockAppsBloc(DeviceRepositoryImpl())),
         BlocProvider(
             create: (context) => BlockSelectAppBloc(BlockRepositoryImpl())),
+        BlocProvider(
+            create: (context) => ScheduleBloc(ScheduleRepositoryImpl())),
         BlocProvider(
             create: (context) =>
                 UserDeviceBloc(ViewAllUserDeviceRepositoryImpl())),
