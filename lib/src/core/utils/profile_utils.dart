@@ -30,6 +30,7 @@ class ProfileUtils {
             onPressed: () async {
               await LocalStorage.deleteLocalStorage('_user');
               await LocalStorage.deleteLocalStorage('_device');
+              await LocalStorage.deleteLocalStorage(AppConstant.firstLogin);
               Future.delayed(const Duration(milliseconds: 500), () {
                 // BlocProvider.of<ProfileBloc>(context)
                 //     .add(SetProfileLogoutEvent());

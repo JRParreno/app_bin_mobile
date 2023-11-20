@@ -1,3 +1,6 @@
+import 'package:app_bin_mobile/gen/colors.gen.dart';
+import 'package:app_bin_mobile/src/core/bloc/profile/profile_bloc.dart';
+import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
@@ -7,6 +10,7 @@ import 'package:app_bin_mobile/src/features/apps/data/repository/app_data_reposi
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/persistent_bottom_navigation.dart';
+import 'package:app_bin_mobile/src/features/block/data/repository/schedule_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/screen/select_device_block.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
@@ -34,12 +38,18 @@ class _HomeScreenState extends State<HomeScreen> {
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
-  final _buildScreens = [
-    const AppsScreen(),
-    const SelectDeviceBlock(),
-    const AppsStatisticsScreen(),
-    const ProfileScreen(),
-  ];
+  List<Widget> _buildScreens() {
+    final profile = ProfileUtils.userProfile(context);
+
+    return [
+      const AppsScreen(),
+      if (profile != null && profile.isParent) ...[
+        const SelectDeviceBlock(),
+      ],
+      const AppsStatisticsScreen(),
+      const ProfileScreen(),
+    ];
+  }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     final profile = ProfileUtils.userProfile(context);
@@ -77,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     appStatsBloc = BlocProvider.of<AppStatsBloc>(context);
-    WidgetsBinding.instance.addPostFrameCallback((_) => getDeviceInfo());
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkFirstLogin());
     super.initState();
   }
 
@@ -90,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, state) {
             return SizedBox(
               child: PersistentBottomNavigation(
-                buildScreens: _buildScreens,
+                buildScreens: _buildScreens.call(),
                 controller: _controller,
                 navBarsItems: _navBarsItems(),
               ),
@@ -99,6 +109,54 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> checkFirstLogin() async {
+    final firstLogin =
+        await LocalStorage.readLocalStorage(AppConstant.firstLogin);
+
+    if (firstLogin == null) {
+      showModalBottomSheet<void>(
+        isDismissible: false,
+        enableDrag: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 200,
+            color: ColorName.primary,
+            child: Stack(children: [
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ElevatedButton(
+                      child: const Text('Tap here to set as child Device'),
+                      onPressed: () {
+                        handleSetProfile();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ]),
+          );
+        },
+      ).whenComplete(() => getDeviceInfo());
+    } else {
+      getDeviceInfo();
+    }
   }
 
   Future<void> getDeviceInfo() async {
@@ -115,6 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (tempDevice != null) {
         await LocalStorage.storeLocalStorage('_device', tempDevice.toJson());
+        await syncAppData(tempDevice);
+
+        return;
       } else {
         await registerDeviceInfo(
             deviceCode: deviceCode, deviceName: deviceName);
@@ -163,10 +224,50 @@ class _HomeScreenState extends State<HomeScreen> {
       apps: apps,
     ));
 
+    await setSchedule(device.pk.toString());
+
     EasyLoading.showSuccess("Done synching");
 
     await Future.delayed(const Duration(seconds: 1), () {
       EasyLoading.dismiss();
     });
+  }
+
+  Future<void> setSchedule(String devicePk) async {
+    try {
+      final profile = ProfileUtils.userProfile(context);
+
+      if (profile != null && !profile.isParent) {
+        final schedule = await ScheduleRepositoryImpl().getSchedule(devicePk);
+
+        if (schedule != null) {
+          await LocalStorage.storeLocalStorage(AppConstant.schedule, schedule);
+
+          return;
+        }
+
+        await LocalStorage.deleteLocalStorage(AppConstant.schedule);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> handleSetProfile() async {
+    final profile = ProfileUtils.userProfile(context);
+
+    if (profile != null) {
+      await LocalStorage.storeLocalStorage(
+          '_user', profile.copyWith(isParent: false).toJson());
+      await LocalStorage.storeLocalStorage(
+          AppConstant.firstLogin, 'firstLogin');
+
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<ProfileBloc>(context).add(
+        SetProfileEvent(profile: profile.copyWith(isParent: false)),
+      );
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+    }
   }
 }

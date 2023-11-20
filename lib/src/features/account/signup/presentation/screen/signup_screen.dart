@@ -35,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _passwordVisible = true;
   bool _confirmPasswordVisible = true;
   bool _isCheck = false;
-  bool _isParentUser = false;
+  bool _isParentUser = true;
   bool isAppUsageEnable = false;
 
   @override

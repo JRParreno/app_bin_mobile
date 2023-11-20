@@ -104,8 +104,11 @@ class _AppBinState extends State<AppBin> {
       final whiteList = await LocalStorage.readLocalStorage('_whiteList');
 
       final userProfile = await ProfileRepositoryImpl().fetchProfile();
+      final fromJsonProfile = Profile.fromJson(user);
       // ignore: use_build_context_synchronously
-      setProfileBloc(profile: userProfile, ctx: ctx);
+      setProfileBloc(
+          profile: userProfile.copyWith(isParent: fromJsonProfile.isParent),
+          ctx: ctx);
       // ignore: use_build_context_synchronously
       setWhiteList(whiteList: whiteList.toString().split(', '), ctx: ctx);
     } else {

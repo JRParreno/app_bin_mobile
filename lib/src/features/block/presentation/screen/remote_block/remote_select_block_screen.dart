@@ -1,4 +1,3 @@
-import 'package:app_bin_mobile/src/features/apps/data/models/device_app.dart';
 import 'package:app_bin_mobile/src/features/block/data/models/block_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

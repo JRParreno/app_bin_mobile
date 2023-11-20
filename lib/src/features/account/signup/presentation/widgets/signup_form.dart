@@ -110,23 +110,6 @@ class SignupForm extends StatelessWidget {
             },
           ),
           const Divider(
-            color: Colors.transparent,
-          ),
-          Row(
-            children: [
-              Checkbox(
-                  value: isParentUser,
-                  onChanged: (value) {
-                    onChangeCheckBoxParent(value ?? false);
-                  }),
-              const Expanded(
-                child: CustomText(
-                  text: "Are you a parent?",
-                ),
-              ),
-            ],
-          ),
-          const Divider(
             height: 40,
             color: Colors.transparent,
           ),

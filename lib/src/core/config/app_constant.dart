@@ -33,4 +33,5 @@ class AppConstant {
   static const apiUser = '$serverUrl/user';
   static const appName = 'App Bin';
   static const schedule = 'schedule';
+  static const firstLogin = 'firstLogin';
 }

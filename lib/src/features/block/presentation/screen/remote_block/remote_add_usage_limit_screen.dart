@@ -5,7 +5,6 @@ import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/common_widget/custom_appbar.dart';
 import 'package:app_bin_mobile/src/core/config/app_constant.dart';
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
-import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/device.dart';
 import 'package:app_bin_mobile/src/features/block/data/models/block_app.dart';
 import 'package:app_bin_mobile/src/features/block/data/models/schedule.dart';
