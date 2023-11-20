@@ -2,9 +2,11 @@ import 'package:app_bin_mobile/gen/assets.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/screen/add_usage_limit_screen.dart';
 import 'package:app_bin_mobile/src/features/block/presentation/widget/usage_limit/usage_limit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class BlockScreen extends StatefulWidget {
   static const String routeName = '/block';
@@ -47,14 +49,18 @@ class _BlockScreenState extends State<BlockScreen> {
       body: Column(
         children: [
           Flexible(child: Assets.json.socialMediaInfluencer.lottie()),
-          const Flexible(child: UsageLimit()),
+          Flexible(child: UsageLimit(
+            onTap: () {
+              PersistentNavBarNavigator.pushNewScreen(
+                context,
+                screen: const AddUsageLimitScreen(),
+                withNavBar: true, // OPTIONAL VALUE. True by default.
+                pageTransitionAnimation: PageTransitionAnimation.fade,
+              );
+            },
+          )),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: Colors.green,
-      //   child: const Icon(Icons.logout),
-      // ),
     );
   }
 }

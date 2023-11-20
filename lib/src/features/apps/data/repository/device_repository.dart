@@ -11,4 +11,6 @@ abstract class DeviceRepository {
   });
 
   Future<void> syncDeviceApps(List<DeviceApp> apps);
+  Future<List<DeviceApp>> getDeviceApps(String deviceCode);
+  Future<Device?> getDeviceInfo();
 }

@@ -9,7 +9,12 @@ import 'package:app_bin_mobile/src/core/routes/app_route.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
 import 'package:app_bin_mobile/src/features/account/profile/data/repositories/profile_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/bloc/apps_bloc.dart';
+import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/home_screen.dart';
+import 'package:app_bin_mobile/src/features/block/data/repository/block_repository_impl.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/bloc/block_apps/block_apps_bloc.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/bloc/block_select_app/block_select_app_bloc.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/bloc/user_device/user_device_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/request_device/data/repository/request_device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/device/request_device/presentation/bloc/request_pair_device_user_bloc.dart';
 import 'package:app_bin_mobile/src/features/device/view_all_user_device/data/repository/view_all_user_device_repository_impl.dart';
@@ -141,7 +146,7 @@ class _AppBinState extends State<AppBin> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (ctx) => ProfileBloc()),
-        BlocProvider(create: (ctx) => AppsBloc()),
+        BlocProvider(create: (ctx) => AppsBloc(DeviceRepositoryImpl())),
         BlocProvider(create: (ctx) => AppStatsBloc()),
         BlocProvider(
             create: (context) =>
@@ -153,6 +158,13 @@ class _AppBinState extends State<AppBin> {
             create: (context) =>
                 ViewAllUserDeviceBloc(ViewAllUserDeviceRepositoryImpl())),
         BlocProvider(create: (context) => AppStatsUserBloc()),
+        BlocProvider(
+            create: (context) => BlockAppsBloc(DeviceRepositoryImpl())),
+        BlocProvider(
+            create: (context) => BlockSelectAppBloc(BlockRepositoryImpl())),
+        BlocProvider(
+            create: (context) =>
+                UserDeviceBloc(ViewAllUserDeviceRepositoryImpl())),
       ],
       child: ScreenUtilInit(
         useInheritedMediaQuery: true,

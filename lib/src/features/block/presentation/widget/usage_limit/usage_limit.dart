@@ -1,11 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:app_bin_mobile/gen/colors.gen.dart';
 import 'package:app_bin_mobile/src/core/common_widget/common_widget.dart';
-import 'package:app_bin_mobile/src/features/block/presentation/screen/add_usage_limit_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class UsageLimit extends StatelessWidget {
-  const UsageLimit({super.key});
+  const UsageLimit({
+    Key? key,
+    required this.onTap,
+  }) : super(key: key);
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +38,7 @@ class UsageLimit extends StatelessWidget {
               CustomBtn(
                 label: "Add usage limit",
                 onTap: () {
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: const AddUsageLimitScreen(),
-                    withNavBar: true, // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
+                  onTap();
                 },
               ),
             ],

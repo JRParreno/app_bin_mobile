@@ -1,14 +1,13 @@
 import 'package:app_bin_mobile/src/core/local_storage/local_storage.dart';
 import 'package:app_bin_mobile/src/core/utils/help.dart';
 import 'package:app_bin_mobile/src/core/utils/profile_utils.dart';
-import 'package:app_bin_mobile/src/features/account/profile/data/models/profile.dart';
 import 'package:app_bin_mobile/src/features/account/profile/presentation/screens/profile_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/data/models/device.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/app_data_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/data/repository/device_repository_impl.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/screen/apps_screen.dart';
-import 'package:app_bin_mobile/src/features/block/presentation/screen/block_screen.dart';
 import 'package:app_bin_mobile/src/features/apps/presentation/widgets/navigation/persistent_bottom_navigation.dart';
+import 'package:app_bin_mobile/src/features/block/presentation/screen/select_device_block.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/bloc/app_stats_bloc.dart';
 import 'package:app_bin_mobile/src/features/stats/presentation/screens/apps_statistics_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -37,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _buildScreens = [
     const AppsScreen(),
-    const BlockScreen(),
+    const SelectDeviceBlock(),
     const AppsStatisticsScreen(),
     const ProfileScreen(),
   ];
@@ -123,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    await syncAppData(Device.fromJson(currentDeviceInfo));
+    await syncAppData(Device.fromJsonLocal(currentDeviceInfo));
   }
 
   Future<void> registerDeviceInfo({

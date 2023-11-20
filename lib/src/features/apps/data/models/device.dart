@@ -44,9 +44,19 @@ class Device {
     );
   }
 
+  factory Device.fromMapLocal(Map<String, dynamic> map) {
+    return Device(
+      pk: map['pk'],
+      deviceName: map['deviceName'] ?? '',
+      deviceCode: map['deviceCode'] ?? '',
+    );
+  }
+
   String toJson() => json.encode(toMap());
 
   factory Device.fromJson(String source) => Device.fromMap(json.decode(source));
+  factory Device.fromJsonLocal(String source) =>
+      Device.fromMapLocal(json.decode(source));
 
   @override
   String toString() =>
